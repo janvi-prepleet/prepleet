@@ -88,3 +88,11 @@ LATEST USER OVERRIDES — 2026-11-01
 - Combine the remaining MVP frontend/backend/auth/content/PDF/comments work into one PR. The user still reviews and merges main.
 - Use Google authentication for now, superseding the earlier email/password method and Google-deferred answer.
 - Vercel project creation and a preview deployment are authorized; token supplied in the ignored .env. Production/DNS still has its separate release checkpoint.
+
+
+Q12. Persist admin pipeline prompts and feedback in PostgreSQL?
+Evidence: The existing public.solutions table already matches the pipeline's saved solution/stage fields, including owner_id, revisions, questions, content and optimistic version. Its row count was 0 at inspection. Existing private auth_sessions and generation_usage tables are also present. However, the pipeline currently writes active prompts, prompt versions and feedback history to local files; the supplied database design has no durable tables for those records.
+Proposed addition: create prepleet_private.admin_prompt_versions for versioned prompt text, version metadata and rollback provenance, and prepleet_private.admin_feedback_events for feedback history linked to a prompt version. Keep both private to the trusted backend, with no anon/authenticated table access. Migrate/seed versioned prompt resources explicitly; never silently replace existing prompt history. Keep public.solutions and its existing records/policies unchanged. Main-app solution presentation/publication remains deferred as requested.
+Question: Do you approve these two private PostgreSQL tables so the standalone admin app can preserve its existing prompt feedback/version/rollback flow across restarts and Vercel instances?
+Recommended answer: Yes, add both private tables. If prompt editing/versioning is not wanted now, the alternative is generation/history only, with read-only repository prompts and no prompt-lab writes.
+Answer: Approved by the user on 2026-11-02: 'yes makes sense pls go ahead'. Add both private PostgreSQL tables; implementation may resume.

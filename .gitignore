@@ -10,3 +10,6 @@ test-results/
 .DS_Store
 *.tsbuildinfo
 *.log
+
+# Separate prepleet-admin repository checkout
+/admin/
