@@ -1,0 +1,84 @@
+PrepLeet — Questions on the supplied DB and UI designs
+Date: 2026-11-01
+Status: Answers recorded on 2026-11-01. MVP decisions are resolved; follow-up rules for future features are deferred.
+Format: Plain text, editable in the IDE. This file uses the requested quries.doc filename.
+
+Source of truth: docs/DB_DESIGN.png and docs/UI_DESIGN.jsx.
+The saved UI is now complete (1,326 lines). UI_DESIGN_.jsx is visible in IDE context but is not a separate saved file in docs/.
+The earlier reduced database proposal is withdrawn. No database changes have been applied.
+
+UNDERSTANDING CONFIRMED FROM THE UI — NO ANSWER REQUIRED
+
+- Domains: Consulting (consulting), Product Management (product).
+- Consulting case types: Guesstimate, Profitability, Pricing Strategy, Market Entry, M&A, Go-to-Market.
+- Product Management case types: Guesstimate, Product Design, Metric Cases, RCA Cases.
+- Guesstimate is shared across both domains.
+- Guide categories: In a hurry, Core Concepts, Solved Cases, Patterns & Trends.
+- A domain is an interview track; it is not an industry such as Mobility, Banking or Food tech.
+Evidence: UI lines 107–135, 285–304, 736–787.
+
+User answers and delegated implementation decisions are recorded below. The original diagram remains authoritative; future-feature questions do not expand MVP scope.
+
+Q1. How should one guide belong to both domains?
+Evidence: BASE includes guides such as g-approach and g-cabs with tracks [consulting, product] (UI lines 15–39). TypeHub lists guides by case type and category without a domain filter (lines 764–787). The diagram gives each guide only one domain_id. case_domain_mapping maps case types to domains, not individual guides.
+Question: Is every guide for a shared case type automatically shared between its mapped domains, or can guides be domain-specific? For a genuinely shared guide, should domain_id be nullable with visibility inherited from case_domain_mapping, should we add a guide-domain junction, or should there be separate guide rows for each domain? If separate rows, should comments/read progress be shared?
+Answer: Confirmed: the same Guesstimate can belong to Product Management and Consulting. Implementation decision: keep one guide and one comment thread; preserve guides.domain_id as optional. A null domain_id inherits the case type's domains from case_domain_mapping; a populated domain_id narrows that guide to that valid domain/type pair. No duplicated guides or new guide-domain table are needed.
+
+Q2. Add the fourth guide category and confirm its stored names?
+Evidence: KINDS defines hurry, concepts, solved and patterns (UI lines 127–132); the diagram guide_type lists only core concepts / in hurry / solved.
+Question: May guide_type include patterns as well? Should the database values be exactly hurry, concepts, solved, patterns, keeping the UI's human-readable labels?
+Answer: Approved: include Patterns & Trends. Backend guide_type values will be hurry, concepts, solved, patterns, mapped explicitly to the exact labels in UI KINDS.
+
+Q3. What exactly should the PDF download contain, and how is it stored?
+Evidence: AGENTS.md requires a PDF version of a blog. Reader currently downloads key points as a .txt one-pager and exposes that tool only for solved guides (UI lines 789–843). The diagram has content_path for Markdown, but no PDF field, PDF table or storage convention.
+Question: Is the download the full blog PDF, the key-points one-pager PDF, or both? Is it available for every guide category or only Solved Cases? Will the owner upload prepared PDFs, or should the app generate them? If uploaded, approve a pdf_path field or specify the path convention/table to use without changing the diagram arbitrarily.
+Answer: User will create a separate PDF content pipeline later. For now provide static/hardcoded PDF support. Implementation decision: commit a real sample PDF under frontend/public/pdfs and map downloads in source; clearly label sample content, add no PDF storage fields or generation pipeline. No new Supabase Storage dependency is needed for this chunk.
+
+Q4. Where do content_path Markdown files live, and how are they published?
+Evidence: guides.content_path is explicitly marked (.md) in the diagram. UI articles have ordered sections, paragraphs, lists, callouts and tables, rendered by Blocks and Reader (UI lines 10–13, 569–576, 789–843).
+Question: Should content_path point to Markdown in the Git repository or a Supabase Storage bucket? Who creates/updates the files and publishes guide metadata? Is the current UI sample content approved as launch content? The implementation will preserve content_path rather than substituting a database body column.
+Answer: Approved: create Markdown files in the Git repository; placeholder content is acceptable. Implementation decision: keep files under frontend/content/guides, preserve guides.content_path as a relative Markdown path, and allowlist it to that directory when reading on the server.
+
+Q5. Confirm the comment target rules and its missing reader UI.
+Evidence: comments includes both case_id and guide_id plus parent_id. The guide Reader has no comments section (UI lines 789–843); the only comment affordance shown is on community interview questions (lines 846–884), which have no dedicated entity in this diagram. The MVP explicitly requires blog comments.
+Question: Must a comment belong to exactly one of guide_id/case_id, or can both be populated? For the MVP, may we place a comments list and posting form below the guide article using the supplied styles? Should parent/reply fields remain available in the schema while the initial UI supports top-level posts only, consistent with the earlier posting-only agreement?
+Answer: Approved: add the missing comments section to the guide reader. A guide comment has guide_id populated and case_id null; a case comment has case_id populated and guide_id null. Enforce exactly one target. Retain parent_id from the diagram; MVP UI supports top-level posting and owner moderation only, with replies/edit/delete UI deferred.
+
+Q6. Confirm relationship cardinalities and duplicate company associations.
+Evidence: guides and case_studies each have case_type_id, but their arrows to case_types are labelled 1:1. The UI has many guides/cases of each type. case_studies has company_id while case_companies also maps cases to companies; cases such as c1 list multiple companies (UI lines 307–339).
+Question: Confirm many guides/cases may reference one case type, rather than adding a UNIQUE constraint to case_type_id. Is case_studies.company_id a primary company with additional associations in case_companies, or should all company associations use the junction? If both remain, how must they agree? Are guide_id links reusable across multiple cases, as readFor's fallback behavior suggests (UI lines 303–304)?
+Answer: Confirmed: case type relationships are one-to-many, not one-to-one. Do not add uniqueness to referencing case_type_id fields. Company and reusable-case-guide details are deferred to their future PR because case practice is outside this release; preserve the diagram fields.
+
+Q7. Resolve the scope conflict between strict UI fidelity and the original MVP.
+Evidence: AGENTS.md restricts the release to auth, guesstimate blogs/PDFs/comments and Practice Coming soon. The current UI includes all nine case types, read progress, saved cases, dashboard metrics, community, expanded profiles, subscriptions and AI practice. Several of those have no matching storage in the diagram.
+Question: Does the original MVP remain the release scope, using the exact design for its applicable screens, with the rest deferred? Or are you expanding this release? Please specify which of these are functional now: all nine types vs Guesstimate only; read progress; case bookmarks; profile editing; community; subscription/paid access. Practice remains Coming soon unless you explicitly change it. For deferred navigation/actions, should they be hidden or show Coming soon? This determines whether the conditional gaps in Q8–Q10 need to be resolved now.
+Answer: Confirmed: reproduce the supplied UI, with backend behavior limited to AGENTS.md MVP scope. No new product features. Practice is Coming soon. Keep the domain/type/category navigation and reader design; Guesstimate guides are the only live content type in this release. Non-MVP learning actions show Coming soon instead of fabricated persistent behavior.
+
+Q8. If the full profile is in this release, how should its additional fields be stored?
+Evidence: Profile/PROFILE0 (UI lines 1036–1099 and 1283–1288) include city, target season, multiple target domains, target firms/roles, specialisation, graduation year, undergraduate details, industry, previous jobs and internships. These fields/child collections do not exist in profiles in the diagram. The diagram requires unique username, but signup collects only name/email/password (lines 1266–1280).
+Question: Defer these extra profile features, or extend the schema? If extending, approve fields/child tables and specify whether the arrays are structured records. Should username be collected during signup, assigned automatically, or completed later? Which diagram profile fields are required at signup versus optional?
+Answer: Confirmed: use the columns in the diagram profiles table only. Do not add expanded education/goals/work-history fields from the UI. Implementation decision: collect name at signup, generate a unique non-email username for initial account setup, and keep education/work/birth-year/icon fields optional until provided. No new profile editor is included in MVP.
+
+Q9. If case-library/dashboard behavior is in this release, resolve its missing data.
+Evidence: CaseCard/LibraryView use industry, average rating, total attempts, status (not started / in progress / completed), and saved state (UI lines 578–700). The diagram lacks industry/rating fields or rating records; user_case_state has attempt_click and bookmarked but no completion state/time. Dashboard adds weekly goals, activity, streaks and skill scores (lines 913–945). case_types descriptions/colors/skills are currently UI constants.
+Question: Which values are real now and which are deferred? What does attempt_click store (boolean, count or timestamp)? If completion/ratings/activity are functional, approve their storage and calculation rules. May case-type labels, descriptions, colors and skills remain source-controlled UI metadata, or must they be stored in the database? No prototype statistics will be presented as real user data.
+Answer: Confirmed: no dashboard. Practice, attempt tracking, ratings, bookmarks and activity metrics remain outside the agreed backend scope. Case-type presentation metadata may stay source-controlled to reproduce the UI; do not show prototype statistics as actual user data.
+
+Q10. If community or subscriptions are in this release, their storage is missing.
+Evidence: Community has interview questions with company/role/round/year, “I got this too”, votes, answers, success stories and peer case authors/review state (UI lines 342–364, 846–910). Profile/Pricing have plans, trials, payment methods and billing history (lines 1100–1120 and 1180–1194). The diagram contains no corresponding entities/entitlements or case author/review fields.
+Question: Confirm these features are deferred, or provide/approve the missing models before implementation. An access enum free/pro in case_studies alone cannot determine a user's paid entitlement. Google login also appears in the prototype (line 1272), while email/password was previously approved; should Google be deferred or configured too?
+Answer: Confirmed: no community or subscriptions. No corresponding tables, paid entitlements, billing or payment integration in MVP. Use the previously approved email/password method; Google OAuth is deferred. No live-looking unsupported login button will be shipped.
+
+Q11. Confirm unspecified diagram constraints and visibility before migrations.
+Evidence: The diagram marks slugs/level/company kind/mapping with question marks, lists status enums without all values, and does not define public access to profile fields. It includes soft-delete timestamps for comments and publication statuses for content.
+Question: May we use UUID IDs, unique non-empty slugs, Easy/Medium/Hard levels, draft/published/archived content status, visible/hidden comment status and one reaction per user/comment as the composite key indicates? What values should companies.kind allow, or is it optional free text? Should deleting a user/content row delete dependents or retain/anonymize them? May public comment reads expose only author name/username/icon, keeping education/work/birth-year data private? Please amend any proposed rule; no unspecified constraint will be treated as approved before your reply.
+Answer: User delegated these technical choices: “YOU FIGURE out ... whatever is prod way.” Implementation decisions: UUID primary keys; unique, non-empty slugs for routable content; Easy/Medium/Hard levels matching the UI; draft/published/archived content states; visible/hidden comment states; database constraints as well as server validation; RLS for each application table. Public comment authors expose only name/username/icon through an explicit projection; education, employment and birth year stay private. One reaction per user/comment follows the diagram composite key. Use restrictive deletes for referenced published content and soft deletion for comments; archive content rather than implicitly deleting it. Account-deletion handling and company-specific rules will be specified and tested when those out-of-scope features are introduced. Do not implement a destructive account deletion flow in this MVP.
+
+WORKFLOW AFTER ANSWERS
+
+- One small feature branch and PR at a time; user reviews and merges into main.
+- Each PR states behavior, relevant tests and any resolved question IDs.
+- Refresh from remote main after the user's merge before the next chunk.
+- No direct implementation pushes to main and no agent merges.
+- The current scaffold is provisional; it will be reconciled with the supplied design in reviewable chunks.
+- User answers now permit small PRs to resume. First establish the design/decision baseline; implementation follows after the user merges it. Do not apply migrations to shared Supabase as a side effect of opening a PR.
