@@ -1,6 +1,6 @@
 # Preview deployment and outstanding live checks
 
-Status: code and migrations prepared in the combined MVP PR. No hosted migration or deployment has been performed by this PR.
+Status: PR #3 is merged. Four hosted migrations applied successfully in one transaction; Vercel preview is READY. Existing solutions was preserved. No production/DNS release has been performed.
 
 ## Supabase
 
@@ -23,11 +23,11 @@ Add only the application variables to the deployed environment:
 - NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 - NEXT_PUBLIC_SITE_URL (the final production URL for production)
 
-Preview OAuth uses the platform's VERCEL_URL origin. Add that exact callback origin to Supabase's allowed redirects. Git-based deployments should track the PR branch for preview and main for production; production/domain changes still need release approval. Markdown files are included in the blog route's server bundle via outputFileTracingIncludes.
+OAuth uses the initiating browser origin (validated by Next Server Actions), preserving PKCE cookies across local addresses and preview aliases. The configured site URL is only a fallback when Origin is absent. Add that exact callback origin to Supabase's allowed redirects. Git-based deployments should track the PR branch for preview and main for production; production/domain changes still need release approval. Markdown files are included in the blog route's server bundle via outputFileTracingIncludes.
 
 ## Live acceptance checklist
 
-- [ ] Apply/review migrations on the intended preview Supabase project.
+- [x] Apply/review all four migrations on the supplied Supabase project; migration history retained.
 - [ ] Verify public listing, both domain contexts, guide Markdown and sample PDF using actual Supabase reads.
 - [ ] Complete Google consent in a browser; verify signup/profile creation, return path, refresh persistence and logout.
 - [ ] Post a comment, reload, and view it from another account or logged-out session.
@@ -42,3 +42,20 @@ Local fixture tests and SQL tests do not mark these live checks complete. Browse
 - [Supabase server-side cookie clients](https://supabase.com/docs/guides/auth/server-side/creating-a-client)
 - [Supabase Google sign-in](https://supabase.com/docs/guides/auth/social-sign-in/auth-google)
 - [Supabase migrations](https://supabase.com/docs/guides/deployment/database-migrations)
+
+## Current deployment record
+
+- Preview: https://prepleet-8gzlhr3ip-prepleet.vercel.app
+- Vercel project: prepleet, root frontend, source commit 7ab8381. Deployment state READY. Vercel login protection is preserved; anonymous HTTP probes receive a redirect.
+- Hosted migration history contains all four versions. Counts: 2 domains, 9 case types and 4 guides. Existing solutions was not changed.
+- This preview was uploaded from the reviewed source commit through the Vercel API. Automatic GitHub-to-Vercel deployment linkage is not configured; do not assume a main push automatically deploys production.
+- Supabase Google provider is enabled. Verify allowlist entries for http://localhost:3000/auth/callback** and https://prepleet-8gzlhr3ip-prepleet.vercel.app/auth/callback** before real Google acceptance.
+- All further code/progress lives in the active IDE directory. Prior temporary checkouts are historical.
+
+## OAuth and region correction
+
+Supabase Auth's callback allowlist was empty, causing preview sign-in to fall back to the localhost Site URL. It now includes localhost:3000, 127.0.0.1:3000 and the initial preview's /auth/callback**. Existing Site URL/provider settings were preserved. Add each new exact preview callback when deploying; do not use a wildcard for arbitrary preview hosts.
+
+The app now preserves the browser Host through OAuth start and callback, rather than forcing the configured URL. A regression test covers localhost versus 127.0.0.1. Error logging contains only safe code/status fields.
+
+The database is in AWS ap-southeast-2; the original functions were in iad1. frontend/vercel.json now requests syd1, colocating server functions with the database. Confirm the effective regions field on the replacement deployment. Read-only session display uses cryptographically verified claims and request-scoped caching; mutations still verify the live auth user.

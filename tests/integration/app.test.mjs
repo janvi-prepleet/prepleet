@@ -106,11 +106,20 @@ test("Google PKCE start, callback, comment posting and signout use real Next act
   );
   const cookie = cookieHeader(callback);
   assert.ok(cookie.includes("auth-token"));
+  await fetch("http://127.0.0.1:4410/test/metrics?reset=true");
   const reader = await fetch(base + "/blogs/cabs-in-mumbai", {
     headers: { Cookie: cookie },
   });
   const html = await reader.text();
   assert.ok(html.includes("Sign out"));
+  const metrics = await fetch("http://127.0.0.1:4410/test/metrics").then(
+    (response) => response.json(),
+  );
+  assert.equal(
+    metrics.authUserRequests,
+    0,
+    "Read-only navigation should verify asymmetric JWTs locally",
+  );
   const commentHtml = html.match(
     /<form[^>]*class="comment-form"[\s\S]*?<\/form>/,
   )?.[0];
@@ -125,6 +134,13 @@ test("Google PKCE start, callback, comment posting and signout use real Next act
   });
   assert.equal(posted.status, 200);
   assert.match(await posted.text(), /Comment posted/);
+  const writeMetrics = await fetch("http://127.0.0.1:4410/test/metrics").then(
+    (response) => response.json(),
+  );
+  assert.ok(
+    writeMetrics.authUserRequests > 0,
+    "Posting must still verify the live auth user",
+  );
   const reloaded = await fetch(base + "/blogs/cabs-in-mumbai");
   assert.match(
     await reloaded.text(),
@@ -155,4 +171,29 @@ test("failed OAuth callbacks and backend outages have safe user-facing states", 
   } finally {
     await fetch("http://127.0.0.1:4410/test/failure?enabled=false");
   }
+});
+
+test("OAuth cookies stay on the browser origin when configured URL differs", async () => {
+  const browserOrigin = base.replace("127.0.0.1", "localhost");
+  const response = await fetch(browserOrigin + "/login");
+  const started = await fetch(browserOrigin + "/login", {
+    method: "POST",
+    body: fields(await response.text()),
+    headers: { Origin: browserOrigin },
+    redirect: "manual",
+  });
+  assert.equal(started.status, 303);
+  const authorize = new URL(started.headers.get("location"));
+  assert.equal(
+    new URL(authorize.searchParams.get("redirect_to")).origin,
+    browserOrigin,
+  );
+  const callback = await fetch(
+    browserOrigin + "/auth/callback?code=valid-code&next=/learn",
+    {
+      headers: { Cookie: cookieHeader(started) },
+      redirect: "manual",
+    },
+  );
+  assert.equal(callback.headers.get("location"), browserOrigin + "/learn");
 });

@@ -37,7 +37,6 @@
 - Practice simulations and their scoring or progress tracking.
 - Other product features unless explicitly added to the approved scope.
 
-
 ## Color Scheme
 
 - its in docs/UI_DESIGN.jsx file
@@ -53,3 +52,9 @@
 
 All documents for planning and executing this project will be in the docs/ directory.
 Please review the docs/PLAN.md document before proceeding.
+
+## Working directory and progress
+
+- Keep implementation and feature branches in `/Users/Janvi.Chokshi/prepleet`, the user's active IDE directory. Do not hide ongoing work in a separate worktree unless explicitly requested.
+- Keep the current status board at the top of `docs/PLAN.md` updated during work and before raising each PR. Distinguish implementation, local/fixture tests, hosted deployment and live browser verification.
+- The user reviews and merges PRs into main. Current auth is Google-only through Supabase; dashboard, community and subscriptions remain excluded.

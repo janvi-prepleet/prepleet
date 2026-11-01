@@ -1,9 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createSupabase, hasSupabaseConfig } from "@/lib/supabase/server";
 import { safeReturnPath } from "@/lib/validation";
-import { siteUrl } from "@/lib/site-url";
 
 export async function GET(request: NextRequest) {
+  const callbackOrigin = new URL(request.url);
+  // Preserve the browser host; Next can normalize local IPs internally.
+  const host = request.headers.get("host");
+  if (host) callbackOrigin.host = host;
   const code = request.nextUrl.searchParams.get("code");
   if (code && hasSupabaseConfig()) {
     const db = await createSupabase();
@@ -12,9 +15,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(
         new URL(
           safeReturnPath(request.nextUrl.searchParams.get("next")),
-          siteUrl(),
+          callbackOrigin,
         ),
       );
+    console.error("OAuth callback exchange failed", {
+      code: error.code || error.name,
+      status: error.status,
+    });
   }
-  return NextResponse.redirect(new URL("/login?error=callback", siteUrl()));
+  return NextResponse.redirect(
+    new URL("/login?error=callback", callbackOrigin),
+  );
 }

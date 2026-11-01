@@ -1,5 +1,5 @@
 import { createServer } from "node:http";
-import { randomBytes } from "node:crypto";
+import { generateKeyPairSync, sign } from "node:crypto";
 export const fixtureUser = {
   id: "10000000-0000-4000-8000-000000000001",
   aud: "authenticated",
@@ -11,8 +11,11 @@ export const fixtureUser = {
 };
 const encode = (value) =>
   Buffer.from(JSON.stringify(value)).toString("base64url");
-export const fixtureToken =
-  encode({ alg: "HS256", typ: "JWT" }) +
+const { privateKey, publicKey } = generateKeyPairSync("ec", {
+  namedCurve: "prime256v1",
+});
+const signingInput =
+  encode({ alg: "ES256", typ: "JWT", kid: "fixture-key" }) +
   "." +
   encode({
     sub: fixtureUser.id,
@@ -20,9 +23,14 @@ export const fixtureToken =
     role: "authenticated",
     exp: Math.floor(Date.now() / 1000) + 3600,
     iat: Math.floor(Date.now() / 1000),
-  }) +
+  });
+export const fixtureToken =
+  signingInput +
   "." +
-  randomBytes(32).toString("base64url");
+  sign("sha256", Buffer.from(signingInput), {
+    key: privateKey,
+    dsaEncoding: "ieee-p1363",
+  }).toString("base64url");
 const base = {
   domain_id: null,
   level: "Easy",
@@ -67,6 +75,7 @@ export const fixtureGuides = [
   },
 ];
 export function createFixtureServer() {
+  let authUserRequests = 0;
   const comments = [
     {
       id: "20000000-0000-4000-8000-000000000001",
@@ -85,6 +94,21 @@ export function createFixtureServer() {
     };
     const authenticated =
       req.headers.authorization === `Bearer ${fixtureToken}`;
+    if (url.pathname === "/test/metrics") {
+      if (url.searchParams.get("reset")) authUserRequests = 0;
+      return send(200, { authUserRequests });
+    }
+    if (url.pathname === "/auth/v1/.well-known/jwks.json")
+      return send(200, {
+        keys: [
+          {
+            ...publicKey.export({ format: "jwk" }),
+            kid: "fixture-key",
+            alg: "ES256",
+            use: "sig",
+          },
+        ],
+      });
     if (url.pathname === "/test/failure") {
       failure = url.searchParams.get("enabled") === "true";
       return send(200, { ok: true });
@@ -107,10 +131,12 @@ export function createFixtureServer() {
         user: fixtureUser,
       });
     }
-    if (url.pathname === "/auth/v1/user")
+    if (url.pathname === "/auth/v1/user") {
+      authUserRequests++;
       return authenticated
         ? send(200, fixtureUser)
         : send(401, { message: "Unauthorized" });
+    }
     if (url.pathname === "/auth/v1/logout") return send(204);
     if (failure && url.pathname.startsWith("/rest/"))
       return send(503, { message: "Test service unavailable" });
