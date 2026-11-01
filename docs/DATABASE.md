@@ -23,10 +23,10 @@ The diagram contains:
 
 `TRACK_NAME`, `TOPICS`, `TOPIC_TYPE` and `TRACK_TYPES` at UI lines 107–115 establish the terminology. UI tracks map to database domains; topics/types map to case types. Industry labels such as Mobility and Food tech are not domains.
 
-| Domain | UI key | Case types |
-| --- | --- | --- |
-| Consulting | `consulting` | Guesstimate, Profitability, Pricing Strategy, Market Entry, M&A, Go-to-Market |
-| Product Management | `product` | Guesstimate, Product Design, Metric Cases, RCA Cases |
+| Domain             | UI key       | Case types                                                                    |
+| ------------------ | ------------ | ----------------------------------------------------------------------------- |
+| Consulting         | `consulting` | Guesstimate, Profitability, Pricing Strategy, Market Entry, M&A, Go-to-Market |
+| Product Management | `product`    | Guesstimate, Product Design, Metric Cases, RCA Cases                          |
 
 The same Guesstimate type appears in both domains. It is one shared content identity. Keep `guides.domain_id` nullable: null inherits domain membership from `case_domain_mapping`; a non-null value must be a valid domain/type pair and narrows visibility. Comments attach to the shared guide ID, independently of the navigation domain. UI labels such as Guesstimates, Profitability Cases and Merger & Acq. differ from canonical type names; preserve the displayed labels when rendering.
 
@@ -41,16 +41,24 @@ The same Guesstimate type appears in both domains. It is one shared content iden
 - Add comments below the guide reader using the reference UI styles. Enforce exactly one of `guide_id` and `case_id`; keep the other null. Retain parent_id and edit/delete columns from the diagram, but no replies/edit/delete UI is required now. A reply relationship, when introduced, must stay on the same target.
 - Case type foreign keys have one-to-many cardinality. Retain company-related fields from the diagram; resolve any future feature-specific ambiguity in that feature's PR instead of guessing a live behavior now.
 - Technical defaults delegated by the user: UUID primary keys; unique non-empty content slugs; Easy/Medium/Hard levels; draft/published/archived content; visible/hidden comments; database constraints plus server validation; RLS; public author name/username/icon only. Preserve private profile columns behind owner-only access. Use explicit public author projections rather than public SELECT on all profile fields.
-- Signup collects a name and generates a unique username without exposing email in the public handle. Other diagram profile details are optional. Authentication uses email/password with confirmation and recovery, as previously agreed; Google login is deferred.
+- Signup collects a name and generates a unique username without exposing email in the public handle. Other diagram profile details are optional. Latest user instruction: use Google-only authentication through Supabase. Email/password and recovery are deferred.
 - Archive published content and restrict deletion while referenced; use the diagram's comment soft-delete fields. No account-deletion product flow is included. Reaction, company, practice and other future-feature rules are implemented only when their own scope is authorized.
 - Public reading/downloads and owner moderation remain as agreed. No admin application is needed. Repository content changes and metadata publishing steps must be documented with their implementation.
 
 ## Delivery and validation
 
-Implement small feature branches and PRs; the user merges into main. Each schema PR must include a migration, focused tests and documentation of the corresponding answered questions. Test publication access, identity isolation, valid foreign keys, shared-domain filtering and preservation of design fields. Never use a privileged database connection for ordinary browser requests. Connectivity is separate from schema approval: Postgres read-only SELECT 1 succeeded, Auth was reachable, and REST authorization remains unresolved.
+Implement small feature branches and PRs; the user merges into main. Each schema PR must include a migration, focused tests and documentation of the corresponding answered questions. Test publication access, identity isolation, valid foreign keys, shared-domain filtering and preservation of design fields. Never use a privileged database connection for ordinary browser requests. Connectivity checks succeeded. Google is enabled; actual table endpoints accept the publishable key. The earlier REST root 401 was schema-discovery protection, not ordinary query rejection.
 
 ## Taxonomy migration implementation
 
 The first schema PR adds `domains`, `case_types` and `case_domain_mapping`, with the diagram's column names and restrictive foreign-key deletes. Catalog data is a production reference-data migration, rather than optional development seed data: all environments need the same nine case types and ten domain/type memberships. Stable UUIDs identify these catalog records; UI-specific keys and display-label differences stay in the frontend mapping when that chunk is implemented.
 
 RLS and explicit SELECT grants let anonymous/authenticated visitors read the taxonomy. Those roles have no INSERT/UPDATE/DELETE grants or write policies. Administrative migrations manage reference data. See `TAXONOMY.md` for local tests and review/deployment boundaries. These files have not been applied to shared Supabase.
+
+## Combined MVP implementation
+
+The next migrations add profiles, guides, comments and the original case_studies/companies dependencies required by comments.case_id. Case practice/company features have no browser grants or app routes. Other future-feature diagram tables are deferred, not removed from the design. A restricted public comment_authors view projects only id/name/username/icon for authors of visible comments on published guides; its deliberate owner-rights execution never exposes the rest of profiles.
+
+The profile trigger consumes only a bounded Google full_name and generates a non-email username, ignoring privilege/username fields in provider metadata. Existing auth users are backfilled. Normal requests use publishable-key Supabase clients and verified session identity; administrative database credentials are used only for migration/inspection tooling.
+
+Hosted deployment is a separate step from the passing disposable-PostgreSQL and HTTP-fixture suites. See DEPLOYMENT.md.

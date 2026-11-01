@@ -1,0 +1,22 @@
+{
+  "name": "prepleet",
+  "private": true,
+  "workspaces": [
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace frontend",
+    "build": "npm run build --workspace frontend",
+    "start": "npm run start --workspace frontend",
+    "typecheck": "npm run typecheck --workspace frontend",
+    "test": "node --test tests/unit/*.test.mjs",
+    "test:integration": "node scripts/test-app.mjs",
+    "test:db": "bash scripts/test-database.sh"
+  },
+  "devDependencies": {
+    "prettier": "3.9.10"
+  }
+}
