@@ -2,26 +2,26 @@
 
 ## Current progress
 
-| Area                              | Status                                                                                                          |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| PR #1: supplied designs/decisions | Merged                                                                                                          |
-| PR #2: domains and case types     | Merged                                                                                                          |
-| PR #3: combined MVP               | Merged; Application and Database CI passed                                                                      |
-| Current IDE directory             | Synced to merged app; dependencies installed                                                                    |
-| Google-authenticated app code     | Implemented; 6 HTTP/action integration tests pass, including cross-host callback regression                     |
-| Guide reading/comments/PDF        | Implemented; 4 Markdown guides and static sample PDF                                                            |
-| Hosted Supabase migrations        | All 4 applied transactionally; existing solutions preserved                                                     |
-| Vercel project/preview            | Created; deployment READY, protected by Vercel sign-in                                                          |
-| Google sign-in fix                | Empty Supabase allowlist corrected remotely; same-origin code fix passes regression test; user confirmed local Google login works    |
-| Navigation performance            | Reader queries parallelized; verified read identity cached per request; function-region fix prepared for Sydney |
-| Desktop/mobile visual QA          | Pending; exact visual match is not verified                                                                     |
-| Production domain/release         | Not started; separate release approval                                                                          |
+| Area                       | Status                                                                                                  |
+| -------------------------- | ------------------------------------------------------------------------------------------------------- |
+| PRs #1–#4                  | Merged; latest main is 867210d                                                                          |
+| Current IDE directory      | Next branch `codex/hosted-auth-verification`, based on merged main                                      |
+| App implementation         | Google auth, guide reading, comments, Markdown and sample PDF implemented                               |
+| Automated app checks       | Previous code passed 5 unit and 6 HTTP/action integration tests                                         |
+| Hosted Supabase            | All four migrations applied; existing solutions preserved                                               |
+| Vercel                     | GitHub main is now connected; current deployment READY in syd1                                          |
+| Hosted login configuration | Repaired missing Production app variables and exact callback allowlist; live Google initiation verified |
+| Google acceptance          | User confirmed local and Vercel Google login; persistence/logout/comments still pending                 |
+| Design acceptance          | Desktop/mobile visual comparison remains pending; exact match not verified                              |
+| Production domain          | Using existing prepleet.vercel.app; custom domain remains unconfirmed                                   |
 
-**Run the app here:** `cd /Users/Janvi.Chokshi/prepleet` then `npm run dev`; open http://localhost:3000.
+**Run locally:** `npm run dev` in this directory, then open http://localhost:3000.
 
-**Preview:** https://prepleet-8gzlhr3ip-prepleet.vercel.app (sign in to Vercel if prompted).
+**Current hosted app:** https://prepleet.vercel.app. Use this stable URL for acceptance, rather than old protected preview URLs.
 
-**Current follow-up branch:** `codex/deployment-handoff` in this directory. OAuth/performance fixes are tested locally; the next PR/preview is being prepared.
+**Current PR:** [#5: hosted login smoke check and deployment progress](https://github.com/janvi-prepleet/prepleet/pull/5), awaiting review/merge. The remote configuration repair is already live.
+
+**Latest deployment:** `dpl_74NErEu7f1XHjZyx6rMAUPmrYKHm`, source `867210d`, READY, region `syd1`. It redeploys the already-merged code with the corrected Production environment. No custom domain/DNS changes were made.
 
 **Working rule:** all future implementation branches and progress edits stay in this directory. Update this status board during work and before raising a PR; the user merges PRs into main.
 
@@ -124,7 +124,7 @@ Depends on database sign-off and Supabase project access.
 - [ ] Create small migration PRs preserving the original design, starting with domains, case types and their mapping; introduce other diagram tables in agreed chunks. Determine constraints and indexes from answered questions without renaming or dropping design fields.
 - [ ] Add repeatable development seed data; Markdown and sample PDFs stay in Git for this release. No PDF Storage integration is required now.
 - [x] Add a server-side Supabase client and cookie refresh proxy using only the publishable key and verified user session. No browser Supabase client is needed for the server-action flow.
-- [x] Implement Google signup/login, PKCE callback, logout and session-cookie persistence (fixture-tested; live Google acceptance remains pending).
+- [x] Implement Google signup/login, PKCE callback, logout and session-cookie persistence (fixture-tested; user confirmed live Google login, persistence/logout acceptance pending).
 - Deferred by the user: email/password and password recovery. Google account recovery remains with Google.
 - [x] Validate OAuth return destinations against allowed app routes.
 - [ ] Configure exact Google/Supabase callback allowlists for local/preview/production; email delivery is outside the Google-only MVP.
@@ -231,16 +231,14 @@ Tests: repeat production smoke checks after any launch fix and verify the affect
 
 Success criteria: the user can operate the MVP; ownership, pending items and verified release status are documented.
 
-## Current progress
+## Remaining acceptance work
 
-PRs #1 and #2 are merged. The user combined the remaining MVP scope and changed auth to Google-only. The current codex/mvp-integration branch contains the app and remaining MVP migrations/tests. Vercel preview is READY and hosted migrations are applied. Current workspace is synchronized to merged PR #3; progress remains in this file and DEPLOYMENT.md. The provisional foundation passed its earlier checks, but does not yet reproduce the full UI. No Supabase schema changes or remote deployments have been made.
+1. Google login is confirmed on https://prepleet.vercel.app; verify the returned session survives reload and logout clears it.
+2. Post/reload a comment and verify public reading and the sample PDF on the hosted app.
+3. Compare desktop/mobile layouts against the supplied UI and check keyboard navigation.
+4. Finish owner publishing/moderation and backup/restore documentation before release approval.
 
-Needed from the user:
-
-1. Complete live Google/browser acceptance. Hosted migrations succeeded; the old REST root 401 was schema-discovery protection, not a bad publishable key.
-2. Review and merge each small PR. Repository-local identity uses the verified janvi-prepleet GitHub noreply address.
-3. PR #3 is merged. Original design and answered questions remain authoritative; Google-only auth is the latest override.
-4. Vercel token received and project created. Production domain/approval remains pending.
+Historical entries below record earlier states; the status board at the top is authoritative.
 
 ## Verification log
 
@@ -295,10 +293,28 @@ Current follow-up: user reported Google signup failure on both local and preview
 - [x] Confirm live project exposes ES256 keys. Regression test uses a real ES256 test signature/JWKS and confirms zero auth-user requests during signed-in reads, while posts still verify the user.
 - [x] Identify hosting mismatch: Supabase ap-southeast-2 (Sydney), initial Vercel iad1 (Virginia). Add frontend/vercel.json selecting syd1; verify deployment region after rollout.
 - [x] Production compilation and all 6 integration tests pass after the fixes. Five unit checks also passed.
-- [ ] Publish the fix PR and updated Vercel preview; record exact URL and configured callback entry.
+- [x] PR #4 merged as 867210d; optimized preview READY and live deployment now serves merged code. Exact callback URLs configured.
 - [x] User confirmed real local Google sign-in works.
-- [ ] Confirm Google sign-in on the replacement Vercel preview.
+- [x] User confirmed Google sign-in on the stable Vercel app URL after the configuration repair.
 
 Baseline warm response samples from the local production server were ~12 ms for Learn, 823 ms for the guide list and 1,071 ms for the reader. After parallelization, list samples were 346/499 ms and reader 1,562/675 ms; live network variability is substantial, so these samples do not establish a guaranteed speedup. The deterministic improvements are fewer dependent query phases and zero remote auth-user calls for asymmetric-JWT reads. Browser rendering metrics and post-region-change production timings remain unmeasured.
 
 User acceptance update: Google signup/login is working locally after the redirect/origin fixes. Vercel acceptance remains pending the replacement preview deployment.
+
+## Hosted auth configuration follow-up — 2026-11-02
+
+- [x] Confirm PR #4 is merged and the current deployment runs its code in syd1.
+- [x] Find missing callback entries: Supabase still allowed only the initial preview; add exact current deployment and stable alias callbacks, preserving existing settings.
+- [x] Reproduce the live login action returning `/login?error=unavailable` before reaching Google.
+- [x] Confirm all three application variables existed only for Preview, while GitHub main deployed to Production.
+- [x] Add encrypted Production values for the public Supabase URL/key and `NEXT_PUBLIC_SITE_URL=https://prepleet.vercel.app`; redeploy the identical merged commit.
+- [x] Verify live OAuth initiation returns 303, sets a PKCE verifier cookie, selects the stable callback and reaches accounts.google.com (302).
+- [x] Add a reusable hosted smoke check: `npm run test:deployment -- https://prepleet.vercel.app`.
+- [x] User confirms hosted Google consent/login works.
+- [ ] Verify hosted session persistence and logout.
+
+No schema or application auth-code change was necessary for this configuration failure. The smoke check does not complete Google consent or prove Supabase callback allowlist acceptance. Management API readback independently verified the exact callback entries. Preview and Production currently share the supplied Supabase project; environment/data isolation remains a release decision.
+
+Verification: `npm run test:deployment -- https://prepleet.vercel.app` passed. A disposable local HTTP fixture reproduced `/login?error=unavailable` and the smoke check correctly failed with the configuration diagnostic. All 5 unit tests passed; `node --check` and `git diff --check` passed. Live HTTP checks also passed for Learn, both domain Guesstimate libraries, the guide reader, Practice, PDF signature and unknown-guide 404. These are HTTP checks, not visual or authenticated browser acceptance.
+
+2026-11-02 user acceptance: Google sign-in at https://prepleet.vercel.app/login succeeded. This confirms the hosted login repair; session persistence, logout, commenting and visual QA remain separate acceptance checks.
