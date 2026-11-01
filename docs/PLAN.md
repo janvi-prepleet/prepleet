@@ -8,11 +8,37 @@ Build PrepLeet with Next.js (frontend and backend), Supabase (database and authe
 - Out of scope: working practice, scoring, progress, bookmarks, reactions, payments, AI chat, Kanban, FastAPI, and an admin UI.
 - Approved on 2026-11-01: public reading and PDF downloads; email/password authentication with email verification and password reset; posting-only comments with moderation through Supabase.
 - User authorized development following this plan on 2026-11-01. The user answered Q1–Q10 and delegated Q11 technical defaults on 2026-11-01. Small PRs may resume; production/DNS changes still require release approval.
-- Target GitHub account: `janvi-prepleet`. The supplied `GIT_KEY` authenticated successfully through the GitHub API; local `origin` is `https://github.com/janvi-prepleet/prepleet.git`. Repository-local commit identity uses janvi-prepleet and the verified account’s GitHub noreply address; first PR publication is in progress.
+- Target GitHub account: `janvi-prepleet`. The supplied `GIT_KEY` authenticated successfully through the GitHub API; local `origin` is `https://github.com/janvi-prepleet/prepleet.git`. Repository-local commit identity uses janvi-prepleet and the verified account’s GitHub noreply address. PR #1 is merged; taxonomy implementation uses a new branch from updated origin/main.
 - User instruction on 2026-11-01: strictly follow `docs/DB_DESIGN.png` and the current `docs/UI_DESIGN.jsx`. The earlier reduced database proposal is superseded. Preserve supplied tables, fields, relationships and UI layouts; record any newly discovered gaps in `docs/quries.doc` and pause dependent implementation until the user answers. The existing scaffold is provisional and does not establish the final design.
 - Source references: `AGENTS.md`, `docs/UI_DESIGN.jsx`, `docs/DB_DESIGN.png`. The current UI reference is now complete (1,326 lines), superseding the earlier truncated version. Other design filenames shown in IDE tabs are not present on disk. Read the saved file as the current source of truth.
 - Development workflow: one small, focused feature branch and PR at a time, with relevant verification and a clear description. The user merges into `main`; the agent does not push implementation directly to `main` or merge PRs. After a merge, base the next chunk on updated remote `main`.
 - Domains are Consulting and Product Management (`consulting` / `product` in the UI). Case types and their domain membership come from `TRACK_TYPES`; Guesstimate belongs to both. Do not confuse the case industry labels with domains.
+
+## Frontend and backend implementation tracks
+
+Keep one plan for this Next.js application. Use separate checklists inside each PR chunk so UI and server/data work share the same contract and acceptance tests. Separate frontend/backend plan files are unnecessary at this size and would duplicate dependencies and progress.
+
+| Chunk | Frontend | Next.js server / Supabase | Verification |
+| --- | --- | --- | --- |
+| Taxonomy (current PR) | Preserve UI names and order; no visual changes | Domains, case types, mappings and public read-only access | Seed membership, constraints and browser-role access tests |
+| App foundation | Port the supplied shell and applicable navigation; Practice Coming soon | Next.js setup, environment config and health route | Type check, build and HTTP smoke checks |
+| Authentication | Supplied signup/login UI, session-aware navigation and recovery forms | Diagram profile columns, Supabase session/callback/recovery and RLS | Valid/invalid auth, session refresh, logout and ownership checks |
+| Guide reading | Domain/type/category hubs and reader matching the supplied UI | Four guide kinds, publication filtering, shared-domain queries and Git Markdown | Domain/category filtering, unpublished access, safe paths and rendering |
+| PDF support | Download action in the reader | Map to the temporary static sample PDF | Valid PDF, working download and explicit sample behavior |
+| Comments | Add list/form below the reader in the supplied style | Exactly one guide/case target, session identity, validation and moderation | Anonymous read/authenticated post, persistence, invalid input and impersonation denial |
+| Preview/release | Responsive/accessibility QA on agreed screens | Vercel config, auth URLs and deployment/migration order | End-to-end journeys in preview before production approval |
+
+### Current chunk: taxonomy foundation
+
+- [x] Confirm PR #1 is merged and branch from updated origin/main.
+- [x] Implement domains, case_types and case_domain_mapping without changing diagram names.
+- [x] Seed two domains, nine case types and ten mappings from the UI; Guesstimate is shared.
+- [x] Add explicit browser SELECT grants, RLS policies and deny browser writes.
+- [x] Add a disposable database test runner and GitHub workflow.
+- [x] Verify migrations, constraints and role permissions on two clean test databases (PostgreSQL 17 Docker).
+- [ ] Publish the small PR and wait for the user's merge before the next chunk.
+
+Frontend checklist for this chunk: no screen changes; keep the supplied UI file unchanged. Backend checklist: versioned schema/reference-data migrations and SELECT-only browser access. Success criteria: a clean database has the expected taxonomy, both domains share one Guesstimate identity, invalid/duplicate relations fail, and browser roles cannot mutate reference data.
 
 ## Part 1: Review and plan
 
@@ -31,6 +57,8 @@ Tests and review:
 Success criteria: scope and execution order are clear; product defaults are agreed; database changes do not precede sign-off.
 
 ## Part 2: Project foundation
+
+Checked scaffold tasks below describe earlier local-only work, not code merged to main. The scaffold must be ported to the supplied design and delivered through the app-foundation PR; its earlier test results do not verify the new design.
 
 - [x] Create a TypeScript Next.js App Router app in `frontend/`, with backend routes in the same app.
 - [x] Add root npm workspace scripts, locked dependencies and Node.js version guidance.
@@ -165,12 +193,12 @@ Success criteria: the user can operate the MVP; ownership, pending items and ver
 
 ## Current progress
 
-Design questions are answered and recorded. Resume through one small PR at a time, beginning with a design/decisions baseline, then taxonomy migrations after the baseline is merged. The provisional foundation passed its earlier checks, but does not yet reproduce the full UI. No Supabase schema changes or remote deployments have been made.
+PR #1 merged on 2026-11-01. The current branch codex/taxonomy-foundation adds taxonomy migrations and tests. One master plan now tracks frontend, server/database and verification work for each chunk. The provisional foundation passed its earlier checks, but does not yet reproduce the full UI. No Supabase schema changes or remote deployments have been made.
 
 Needed from the user:
 1. Supabase URL now resolves and database credentials passed a read-only connection test. Resolve the REST API HTTP 401 before application integration.
 2. Review and merge each small PR. Repository-local identity uses the verified janvi-prepleet GitHub noreply address.
-3. Review and merge the first small PR when available. Q1–Q10 are answered and Q11 choices were delegated; the original DB diagram remains authoritative.
+3. Review and merge the taxonomy PR when available. Q1–Q10 are answered and Q11 choices were delegated; the original DB diagram remains authoritative.
 4. Supply Vercel access and the production domain when deployment begins.
 
 ## Verification log
@@ -187,9 +215,9 @@ Needed from the user:
 
 Each PR must contain a single reviewable concern, tests appropriate to that change, and any affected documentation. Never mark a chunk merged until GitHub confirms it. Sequence and exact boundaries may change based on answers.
 
-1. Design baseline PR: preserve the supplied designs and project instructions and record the user answers, database translation and execution plan. Remote main currently contains only README.md. Keep the provisional app scaffold out of this PR. Then base each following implementation chunk on merged remote main.
+1. Completed: [design baseline PR #1](https://github.com/janvi-prepleet/prepleet/pull/1) merged. It preserves the source designs and resolved decisions. The provisional app scaffold remains local; each implementation PR starts from merged remote main.
 2. Add domains, case types and the approved case-domain mapping with seed data from the UI. Test uniqueness, valid domain/type pairs and Guesstimate membership in both domains.
-3. Add profiles and email/password authentication following the supplied account UI and approved fields. Test sessions, confirmation, recovery and per-user access.
+3. Add the Next.js application foundation in a small PR, porting the supplied shell and applicable navigation. Then add profiles and email/password authentication following the supplied account UI and approved fields in a separate PR. Test sessions, confirmation, recovery and per-user access.
 4. Add guides, guide categories and content retrieval following the original content_path design and resolved domain rules. Test publication visibility and category/domain filtering.
 5. Implement the public page and main navigation exactly for the agreed release screens. Compare desktop/mobile screenshots with the reference and verify keyboard navigation.
 6. Implement domain/type hubs and the guide reader, retaining original content, tables, key points and reader tools. Test links, category counts and shared-domain navigation.
@@ -203,3 +231,7 @@ Each PR must contain a single reviewable concern, tests appropriate to that chan
 2026-11-01 answers: Q1 shared Guesstimates; Q2 four guide kinds and backend-to-UI mapping; Q3 static PDFs pending a separate pipeline; Q4 Git-based Markdown with placeholder content; Q5 add guide comments with exactly one case/guide target; Q6 one-to-many type relationships; Q7 supplied UI with MVP backend only; Q8 diagram profile columns only; Q9/Q10 no dashboard, community or subscriptions. User delegated Q11 production implementation choices. Decisions are recorded in quries.doc and DATABASE.md.
 
 2026-11-01 PR preparation: created codex/design-baseline from origin/main in an isolated worktree. This first PR contains the supplied references, project instructions, resolved design questions and plan only. The locally tested app scaffold, credentials and generated files are excluded. Runtime tests do not apply to this documentation/reference-only change.
+
+2026-11-01: verified PR #1 MERGED (merge commit 34e58a8) and fetched origin/main. Created isolated codex/taxonomy-foundation branch from that merge. Added the frontend/server/test tracking matrix above. No application or shared Supabase schema changes are part of this taxonomy chunk.
+
+2026-11-01 taxonomy verification: both clean PostgreSQL 17 migration/test cycles passed. Tests verified catalog membership/order, uniqueness and input checks, foreign keys, restrictive deletes, actual anon/authenticated read/write behavior, and policy denial after temporary broader grants. Hosted Supabase remained unchanged. Local initdb could not run because libpq lacks the postgres server binary; the test runner uses an isolated disposable Docker container instead. Shell syntax and whitespace checks passed; source UI/DB files are unchanged.

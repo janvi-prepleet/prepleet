@@ -48,3 +48,9 @@ The same Guesstimate type appears in both domains. It is one shared content iden
 ## Delivery and validation
 
 Implement small feature branches and PRs; the user merges into main. Each schema PR must include a migration, focused tests and documentation of the corresponding answered questions. Test publication access, identity isolation, valid foreign keys, shared-domain filtering and preservation of design fields. Never use a privileged database connection for ordinary browser requests. Connectivity is separate from schema approval: Postgres read-only SELECT 1 succeeded, Auth was reachable, and REST authorization remains unresolved.
+
+## Taxonomy migration implementation
+
+The first schema PR adds `domains`, `case_types` and `case_domain_mapping`, with the diagram's column names and restrictive foreign-key deletes. Catalog data is a production reference-data migration, rather than optional development seed data: all environments need the same nine case types and ten domain/type memberships. Stable UUIDs identify these catalog records; UI-specific keys and display-label differences stay in the frontend mapping when that chunk is implemented.
+
+RLS and explicit SELECT grants let anonymous/authenticated visitors read the taxonomy. Those roles have no INSERT/UPDATE/DELETE grants or write policies. Administrative migrations manage reference data. See `TAXONOMY.md` for local tests and review/deployment boundaries. These files have not been applied to shared Supabase.
