@@ -82,3 +82,9 @@ WORKFLOW AFTER ANSWERS
 - No direct implementation pushes to main and no agent merges.
 - The current scaffold is provisional; it will be reconciled with the supplied design in reviewable chunks.
 - User answers now permit small PRs to resume. First establish the design/decision baseline; implementation follows after the user merges it. Do not apply migrations to shared Supabase as a side effect of opening a PR.
+
+LATEST USER OVERRIDES — 2026-11-01
+
+- Combine the remaining MVP frontend/backend/auth/content/PDF/comments work into one PR. The user still reviews and merges main.
+- Use Google authentication for now, superseding the earlier email/password method and Google-deferred answer.
+- Vercel project creation and a preview deployment are authorized; token supplied in the ignored .env. Production/DNS still has its separate release checkpoint.

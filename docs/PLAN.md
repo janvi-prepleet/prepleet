@@ -6,39 +6,45 @@ Build PrepLeet with Next.js (frontend and backend), Supabase (database and authe
 
 - In scope: signup, login, logout, published guesstimate blogs, PDF downloads, viewing/posting comments, and Practice “Coming soon”.
 - Out of scope: working practice, scoring, progress, bookmarks, reactions, payments, AI chat, Kanban, FastAPI, and an admin UI.
-- Approved on 2026-11-01: public reading and PDF downloads; email/password authentication with email verification and password reset; posting-only comments with moderation through Supabase.
+- Latest decisions on 2026-11-01: public reading/PDFs, Google-only sign-in for now, and posting-only comments with owner moderation. Google auth supersedes the earlier email/password decision; password verification/reset work is deferred. The user authorized combining the remaining MVP into one PR and creation of the Vercel project/preview.
 - User authorized development following this plan on 2026-11-01. The user answered Q1–Q10 and delegated Q11 technical defaults on 2026-11-01. Small PRs may resume; production/DNS changes still require release approval.
-- Target GitHub account: `janvi-prepleet`. The supplied `GIT_KEY` authenticated successfully through the GitHub API; local `origin` is `https://github.com/janvi-prepleet/prepleet.git`. Repository-local commit identity uses janvi-prepleet and the verified account’s GitHub noreply address. PR #1 is merged; taxonomy implementation uses a new branch from updated origin/main.
+- Target GitHub account: `janvi-prepleet`. The supplied `GIT_KEY` authenticated successfully through the GitHub API; local `origin` is `https://github.com/janvi-prepleet/prepleet.git`. Repository-local commit identity uses janvi-prepleet and the verified account’s GitHub noreply address. PRs #1 and #2 are merged; combined MVP integration starts from merge 6cf4146 on codex/mvp-integration.
 - User instruction on 2026-11-01: strictly follow `docs/DB_DESIGN.png` and the current `docs/UI_DESIGN.jsx`. The earlier reduced database proposal is superseded. Preserve supplied tables, fields, relationships and UI layouts; record any newly discovered gaps in `docs/quries.doc` and pause dependent implementation until the user answers. The existing scaffold is provisional and does not establish the final design.
 - Source references: `AGENTS.md`, `docs/UI_DESIGN.jsx`, `docs/DB_DESIGN.png`. The current UI reference is now complete (1,326 lines), superseding the earlier truncated version. Other design filenames shown in IDE tabs are not present on disk. Read the saved file as the current source of truth.
-- Development workflow: one small, focused feature branch and PR at a time, with relevant verification and a clear description. The user merges into `main`; the agent does not push implementation directly to `main` or merge PRs. After a merge, base the next chunk on updated remote `main`.
+- Development workflow: feature branches and user-merged PRs. Latest user instruction combines the remaining UI/auth/guides/PDF/comments work into one MVP integration PR, with relevant verification and a clear description. The user merges into `main`; the agent does not push implementation directly to `main` or merge PRs. After a merge, base the next chunk on updated remote `main`.
 - Domains are Consulting and Product Management (`consulting` / `product` in the UI). Case types and their domain membership come from `TRACK_TYPES`; Guesstimate belongs to both. Do not confuse the case industry labels with domains.
 
 ## Frontend and backend implementation tracks
 
 Keep one plan for this Next.js application. Use separate checklists inside each PR chunk so UI and server/data work share the same contract and acceptance tests. Separate frontend/backend plan files are unnecessary at this size and would duplicate dependencies and progress.
 
-| Chunk | Frontend | Next.js server / Supabase | Verification |
-| --- | --- | --- | --- |
-| Taxonomy (current PR) | Preserve UI names and order; no visual changes | Domains, case types, mappings and public read-only access | Seed membership, constraints and browser-role access tests |
-| App foundation | Port the supplied shell and applicable navigation; Practice Coming soon | Next.js setup, environment config and health route | Type check, build and HTTP smoke checks |
-| Authentication | Supplied signup/login UI, session-aware navigation and recovery forms | Diagram profile columns, Supabase session/callback/recovery and RLS | Valid/invalid auth, session refresh, logout and ownership checks |
-| Guide reading | Domain/type/category hubs and reader matching the supplied UI | Four guide kinds, publication filtering, shared-domain queries and Git Markdown | Domain/category filtering, unpublished access, safe paths and rendering |
-| PDF support | Download action in the reader | Map to the temporary static sample PDF | Valid PDF, working download and explicit sample behavior |
-| Comments | Add list/form below the reader in the supplied style | Exactly one guide/case target, session identity, validation and moderation | Anonymous read/authenticated post, persistence, invalid input and impersonation denial |
-| Preview/release | Responsive/accessibility QA on agreed screens | Vercel config, auth URLs and deployment/migration order | End-to-end journeys in preview before production approval |
+| Chunk                   | Frontend                                                                | Next.js server / Supabase                                                       | Verification                                                                           |
+| ----------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Taxonomy (merged PR #2) | Preserve UI names and order; no visual changes                          | Domains, case types, mappings and public read-only access                       | Seed membership, constraints and browser-role access tests                             |
+| App foundation          | Port the supplied shell and applicable navigation; Practice Coming soon | Next.js setup, environment config and health route                              | Type check, build and HTTP smoke checks                                                |
+| Authentication          | Supplied Google sign-in UI and session-aware navigation                 | Diagram profiles, Supabase PKCE/callback/cookies and RLS                        | OAuth initiation/callback, logout and ownership checks                                 |
+| Guide reading           | Domain/type/category hubs and reader matching the supplied UI           | Four guide kinds, publication filtering, shared-domain queries and Git Markdown | Domain/category filtering, unpublished access, safe paths and rendering                |
+| PDF support             | Download action in the reader                                           | Map to the temporary static sample PDF                                          | Valid PDF, working download and explicit sample behavior                               |
+| Comments                | Add list/form below the reader in the supplied style                    | Exactly one guide/case target, session identity, validation and moderation      | Anonymous read/authenticated post, persistence, invalid input and impersonation denial |
+| Preview/release         | Responsive/accessibility QA on agreed screens                           | Vercel config, auth URLs and deployment/migration order                         | End-to-end journeys in preview before production approval                              |
 
-### Current chunk: taxonomy foundation
+### Current chunk: combined MVP integration
 
-- [x] Confirm PR #1 is merged and branch from updated origin/main.
-- [x] Implement domains, case_types and case_domain_mapping without changing diagram names.
-- [x] Seed two domains, nine case types and ten mappings from the UI; Guesstimate is shared.
-- [x] Add explicit browser SELECT grants, RLS policies and deny browser writes.
-- [x] Add a disposable database test runner and GitHub workflow.
-- [x] Verify migrations, constraints and role permissions on two clean test databases (PostgreSQL 17 Docker).
-- [ ] Publish the small PR and wait for the user's merge before the next chunk.
+- [x] Confirm PR #2 is merged and branch from updated main (6cf4146).
+- [x] Add Next.js workspace, environment setup, CI and health API.
+- [x] Port the supplied palette, logo, hero/interactive estimate, navigation, domain/type/category hubs, reader and tools; exclude dashboard/community/subscriptions and show Practice Coming soon.
+- [x] Implement Google-only OAuth start/callback, session cookies, verified user reads, logout, profile trigger and backfill.
+- [x] Add diagram-aligned profiles/guides/comments and required case/company dependencies, preserving publication and exclusive-target constraints with RLS.
+- [x] Add four shared-domain placeholder guides and repository Markdown; label non-MVP case-type content Coming soon.
+- [x] Add a rendered/verified static sample PDF and its reader download action.
+- [x] Add comment list/form, authenticated posting, bounded input, safe author projection, error/pending states and refresh after successful posting.
+- [x] Pass TypeScript, production build, five unit tests, five app integration tests and two clean PostgreSQL migration/test cycles.
+- [x] Create the prepleet Vercel project (frontend root, preview application variables only).
+- [ ] Open the combined PR and verify its CI.
+- [ ] Deploy/verify the Vercel preview and apply the reviewed migrations to the intended preview Supabase project.
+- [ ] Verify live Google consent/callback, session persistence, commenting and desktop/mobile visuals in a browser. Browser inventory currently has no available browser.
 
-Frontend checklist for this chunk: no screen changes; keep the supplied UI file unchanged. Backend checklist: versioned schema/reference-data migrations and SELECT-only browser access. Success criteria: a clean database has the expected taxonomy, both domains share one Guesstimate identity, invalid/duplicate relations fail, and browser roles cannot mutate reference data.
+Test boundaries: HTTP integration uses controlled Supabase fixtures but actual Next.js routing/actions/cookies/rendering. Database tests independently exercise policies as real PostgreSQL browser roles and test existing-user backfill. Neither replaces the live provider/deployment checks. Keep runtime/hosting credentials out of source and never use database passwords in application request handling.
 
 ## Part 1: Review and plan
 
@@ -51,6 +57,7 @@ Frontend checklist for this chunk: no screen changes; keep the supplied UI file 
 - [x] Record the approved translation and additions in `docs/DATABASE.md`; do not revive the reduced schema.
 
 Tests and review:
+
 - [x] Check planned features against the root AGENTS.md scope.
 - [x] Verify no application or package setup existed before scaffolding.
 
@@ -58,13 +65,13 @@ Success criteria: scope and execution order are clear; product defaults are agre
 
 ## Part 2: Project foundation
 
-Checked scaffold tasks below describe earlier local-only work, not code merged to main. The scaffold must be ported to the supplied design and delivered through the app-foundation PR; its earlier test results do not verify the new design.
+The earlier provisional scaffold is superseded by the combined MVP implementation. Its old test evidence is historical; the current branch has separate unit, integration and database checks.
 
 - [x] Create a TypeScript Next.js App Router app in `frontend/`, with backend routes in the same app.
 - [x] Add root npm workspace scripts, locked dependencies and Node.js version guidance.
 - [x] Add root `.env` placeholders and `.env.example`; exclude credentials and generated output from Git.
 - [x] Create the responsive app shell using the supplied design palette.
-- [x] Add a starter blog library, readable guide routes, real missing-page response and Practice “Coming soon”.
+- [x] Add domain/type/category hubs, database-backed guide routes, real missing-page responses and Practice Coming soon.
 - [x] Add `/api/health` to verify Next.js backend routing.
 - [x] Initialize local Git on `main`.
 - [x] Configure repository-local author identity and origin for janvi-prepleet; verify the supplied GitHub key.
@@ -74,6 +81,7 @@ Checked scaffold tasks below describe earlier local-only work, not code merged t
 - [ ] Connect GitHub and verify a Vercel preview after account access is available.
 
 Tests:
+
 - [x] `npm run typecheck` and `npm run build` pass.
 - [x] `npm test` passes against the built server: home, library, every starter guide, Practice, missing guide and health API.
 - [x] Verify `.env` is ignored by Git.
@@ -90,17 +98,20 @@ Depends on database sign-off and Supabase project access.
 - [x] Receive answers to the design questions; future cases/company features remain deferred.
 - [ ] Create small migration PRs preserving the original design, starting with domains, case types and their mapping; introduce other diagram tables in agreed chunks. Determine constraints and indexes from answered questions without renaming or dropping design fields.
 - [ ] Add repeatable development seed data; Markdown and sample PDFs stay in Git for this release. No PDF Storage integration is required now.
-- [ ] Add server/browser Supabase clients using the publishable key and request session.
-- [ ] Implement signup, confirmation callback, login, logout and persistent sessions.
-- [ ] Implement forgotten-password and password-reset flows; validate redirect destinations.
-- [ ] Configure auth redirect URLs and email delivery for local, preview and production environments.
-- [ ] Show validation, pending and failure states without exposing account data or credentials.
+- [x] Add a server-side Supabase client and cookie refresh proxy using only the publishable key and verified user session. No browser Supabase client is needed for the server-action flow.
+- [x] Implement Google signup/login, PKCE callback, logout and session-cookie persistence (fixture-tested; live Google acceptance remains pending).
+- Deferred by the user: email/password and password recovery. Google account recovery remains with Google.
+- [x] Validate OAuth return destinations against allowed app routes.
+- [ ] Configure exact Google/Supabase callback allowlists for local/preview/production; email delivery is outside the Google-only MVP.
+- [x] Show validation, pending and failure states without exposing account data or credentials.
 
 Tests:
+
 - [ ] Apply migrations to an empty test database and verify repeatable reset/seed behavior.
 - [ ] Test anonymous, user A and user B permissions directly through Supabase.
-- [ ] Test valid/invalid signup and login, verification, session refresh, logout and expired sessions.
-- [ ] Test recovery email and valid/expired recovery links; confirm passwords actually change.
+- [x] Test Google initiation/callback cookies and logout through actual Next actions with controlled HTTP fixtures.
+- [ ] Test live Google consent, refresh persistence and expired sessions in a deployed browser.
+- Not applicable now: password-recovery email tests (Google-only auth).
 - [ ] Verify protected mutations fail without a session and user identity cannot be forged.
 
 Success criteria: real accounts work end to end; RLS enforces access independently of UI; authentication email is delivered; no privileged keys reach the browser.
@@ -109,18 +120,19 @@ Success criteria: real accounts work end to end; RLS enforces access independent
 
 Depends on Part 3. Foundation fixtures are temporary and do not count as persistent functionality.
 
-- [ ] Replace static guide fixtures with published Supabase data and stable slug routes.
-- [ ] Load guide Markdown from the agreed location referenced by `guides.content_path`; render lists/tables safely and disable raw HTML. Do not substitute a database body column without approval.
+- [x] Read published guides from Supabase by stable slug; temporary editorial content is seeded through migrations, not a successful-runtime data fallback.
+- [x] Load allowlisted repository Markdown through guides.content_path, render lists/tables and skip raw HTML.
 - [ ] Reproduce the supplied public page, navigation, domain/type hubs, guide sections and reader layouts for the agreed MVP screens; do not use the provisional scaffold as the visual reference.
-- [ ] Add loading, empty, unavailable and error states for content and comments.
-- [ ] Add static/hardcoded PDF download support with a clearly identified sample PDF. The user will provide a separate PDF content pipeline later; do not build it now.
-- [ ] Show visible comments with safe public author names and login prompts for visitors.
-- [ ] Post comments through validated server mutations using the session identity.
-- [ ] Enforce comment length limits, prevent accidental duplicate submissions and refresh comments after posting.
+- [x] Add pending comment submission, empty/unavailable content/comments, login failures and page-error states. Await route validation before streaming to retain true missing-page HTTP statuses.
+- [x] Add a clearly identified static sample PDF. The user will provide the later PDF content pipeline.
+- [x] Show visible comments with safe public author names and visitor login prompts.
+- [x] Post comments through validated server actions using verified session identity and authoritative RLS.
+- [x] Bound comments to 2,000 characters, disable pending submission and revalidate the reader after posting.
 - [x] Implement Practice as a Coming soon page without simulations or scoring.
 - [ ] Complete responsive and accessible styling for auth, reading, download and comment flows.
 
 Tests:
+
 - [ ] Published guides load; draft/archived/unknown guides are inaccessible by direct slug or ID.
 - [ ] PDF downloads open as valid PDFs; missing files and unauthorized object paths fail clearly.
 - [ ] Anonymous users can read but cannot post comments; authenticated comments persist after reload.
@@ -135,10 +147,11 @@ Success criteria: every MVP journey uses real data and access controls; no fixtu
 - [ ] Verify Supabase database and Auth connectivity in the deployed preview, plus repository Markdown and static PDF serving.
 - [ ] Document the owner workflow for repository Markdown and guide metadata publishing/updating/archiving. Keep the temporary sample PDF mapping explicit.
 - [ ] Prepare launch content and verify each blog/PDF pair.
-- [ ] Verify confirmation and password-reset emails with the configured sender.
+- Not applicable now: Google-only authentication does not use application password/confirmation emails.
 - [ ] Document owner comment moderation in Supabase; keep administrative controls outside the app.
 
 Tests:
+
 - [ ] Publish a draft and verify guide visibility; archive it and verify guide requests are denied. Document that the temporary sample PDF is a public static asset, not a protected draft document.
 - [ ] Hide a comment and confirm it disappears from public reads.
 - [ ] Simulate database/content-file/email failures and verify useful user-facing states.
@@ -157,6 +170,7 @@ Success criteria: the owner can maintain blogs, PDFs and comments without code c
 - [ ] Resolve release-blocking failures and record accepted limitations.
 
 Tests:
+
 - [ ] All automated checks pass against the release candidate.
 - [ ] Core journeys pass on desktop and mobile with a clean browser session.
 - [ ] No serious accessibility failures or unauthorized data access remain.
@@ -174,6 +188,7 @@ Success criteria: no known blocker in an MVP journey; test evidence and operatio
 - [ ] Configure the approved domain and HTTPS; update auth redirects to match.
 
 Tests:
+
 - [ ] On the actual domain, verify signup/confirmation/login/logout/recovery and every blog journey.
 - [ ] Confirm production content and session data are isolated from preview/test environments.
 - [ ] Confirm errors are observable and the documented rollback is executable.
@@ -193,13 +208,14 @@ Success criteria: the user can operate the MVP; ownership, pending items and ver
 
 ## Current progress
 
-PR #1 merged on 2026-11-01. The current branch codex/taxonomy-foundation adds taxonomy migrations and tests. One master plan now tracks frontend, server/database and verification work for each chunk. The provisional foundation passed its earlier checks, but does not yet reproduce the full UI. No Supabase schema changes or remote deployments have been made.
+PRs #1 and #2 are merged. The user combined the remaining MVP scope and changed auth to Google-only. The current codex/mvp-integration branch contains the app and remaining MVP migrations/tests. Vercel project prepleet is created; preview deployment and hosted migration status are tracked in DEPLOYMENT.md. The provisional foundation passed its earlier checks, but does not yet reproduce the full UI. No Supabase schema changes or remote deployments have been made.
 
 Needed from the user:
-1. Supabase URL now resolves and database credentials passed a read-only connection test. Resolve the REST API HTTP 401 before application integration.
+
+1. Complete hosted preview/migration acceptance. Google provider is enabled. Actual table requests are authorized; the old REST root 401 was schema-discovery protection, not a bad publishable key.
 2. Review and merge each small PR. Repository-local identity uses the verified janvi-prepleet GitHub noreply address.
-3. Review and merge the taxonomy PR when available. Q1–Q10 are answered and Q11 choices were delegated; the original DB diagram remains authoritative.
-4. Supply Vercel access and the production domain when deployment begins.
+3. Review and merge the combined MVP PR when available. Original design and answered questions remain authoritative; Google-only auth is the latest override.
+4. Vercel token received and project created. Production domain/approval remains pending.
 
 ## Verification log
 
@@ -235,3 +251,5 @@ Each PR must contain a single reviewable concern, tests appropriate to that chan
 2026-11-01: verified PR #1 MERGED (merge commit 34e58a8) and fetched origin/main. Created isolated codex/taxonomy-foundation branch from that merge. Added the frontend/server/test tracking matrix above. No application or shared Supabase schema changes are part of this taxonomy chunk.
 
 2026-11-01 taxonomy verification: both clean PostgreSQL 17 migration/test cycles passed. Tests verified catalog membership/order, uniqueness and input checks, foreign keys, restrictive deletes, actual anon/authenticated read/write behavior, and policy denial after temporary broader grants. Hosted Supabase remained unchanged. Local initdb could not run because libpq lacks the postgres server binary; the test runner uses an isolated disposable Docker container instead. Shell syntax and whitespace checks passed; source UI/DB files are unchanged.
+
+2026-11-01 combined MVP: user authorized combining the remaining phases, switched current auth to Google and authorized new Vercel project creation. Implemented and locally tested UI/navigation, SSR auth/callback/logout, published Markdown guides, sample PDF and comments. Five unit tests, five Next HTTP/action integration tests and two database cycles passed. Sample PDF rendered and visually checked; blog file tracing includes all four Markdown files. Google is enabled on hosted Supabase; normal table requests return PGRST205 because migrations are not deployed, while the schema-discovery root requires a secret key by design. The hosted public schema currently contains solutions only; it has not been modified. Vercel prepleet project created with frontend root and preview-only public app variables.
