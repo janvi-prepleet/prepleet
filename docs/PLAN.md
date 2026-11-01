@@ -19,6 +19,8 @@
 
 **Current hosted app:** https://prepleet.vercel.app. Use this stable URL for acceptance, rather than old protected preview URLs.
 
+**Current PR:** [#5: hosted login smoke check and deployment progress](https://github.com/janvi-prepleet/prepleet/pull/5), awaiting review/merge. The remote configuration repair is already live.
+
 **Latest deployment:** `dpl_74NErEu7f1XHjZyx6rMAUPmrYKHm`, source `867210d`, READY, region `syd1`. It redeploys the already-merged code with the corrected Production environment. No custom domain/DNS changes were made.
 
 **Working rule:** all future implementation branches and progress edits stay in this directory. Update this status board during work and before raising a PR; the user merges PRs into main.
