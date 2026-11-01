@@ -1,6 +1,6 @@
 # Preview deployment and outstanding live checks
 
-Status: PRs #1–#4 are merged. The existing GitHub-connected main deployment is live at https://prepleet.vercel.app. Its missing Production app variables and Supabase callbacks were repaired on 2026-11-02. Hosted Google consent/session acceptance remains pending; no custom domain/DNS changes were made.
+Status: PRs #1–#4 are merged. The existing GitHub-connected main deployment is live at https://prepleet.vercel.app. Its missing Production app variables and Supabase callbacks were repaired on 2026-11-02. The user confirmed hosted Google login works; persistence/logout acceptance remains pending; no custom domain/DNS changes were made.
 
 ## Supabase
 
@@ -29,7 +29,8 @@ OAuth uses the initiating browser origin (validated by Next Server Actions), pre
 
 - [x] Apply/review all four migrations on the supplied Supabase project; migration history retained.
 - [ ] Verify public listing, both domain contexts, guide Markdown and sample PDF using actual Supabase reads.
-- [ ] Complete Google consent in a browser; verify signup/profile creation, return path, refresh persistence and logout.
+- [x] User confirmed Google consent/login completes on the stable hosted URL.
+- [ ] Verify profile creation, return path, refresh persistence and logout.
 - [ ] Post a comment, reload, and view it from another account or logged-out session.
 - [ ] Verify draft/archived guide denial and hidden/deleted comment denial on hosted PostgREST, independently of UI.
 - [ ] Check desktop and mobile screenshots, native learning menus, slider interactions, keyboard focus and form errors against the supplied design.
