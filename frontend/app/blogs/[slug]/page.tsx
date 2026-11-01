@@ -22,20 +22,20 @@ export default async function Reader({ params, searchParams }: Props) {
   const { slug } = await params;
   const requested = (await searchParams).domain;
   const domain = requested && isDomain(requested) ? requested : "consulting";
-  const guide = await getGuide(slug, domain);
-  if (!guide) notFound();
-  const [markdown, user, guides] = await Promise.all([
-    readGuideContent(guide.content_path),
-    currentUser(),
+  const [guide, guides] = await Promise.all([
+    getGuide(slug, domain),
     getGuides(domain),
   ]);
-  let comments: Awaited<ReturnType<typeof getComments>> = [];
-  let commentError = false;
-  try {
-    comments = await getComments(guide.id);
-  } catch {
-    commentError = true;
-  }
+  if (!guide) notFound();
+  const [markdown, user, commentResult] = await Promise.all([
+    readGuideContent(guide.content_path),
+    currentUser(),
+    getComments(guide.id).then(
+      (comments) => ({ comments, error: false }),
+      () => ({ comments: [], error: true }),
+    ),
+  ]);
+  const { comments, error: commentError } = commentResult;
   const sections = headings(markdown);
   let sectionIndex = 0;
   const tools = (

@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { cache } from "react";
 
 export function hasSupabaseConfig() {
   return Boolean(
@@ -28,11 +29,9 @@ export async function createSupabase() {
     },
   );
 }
-export async function currentUser() {
+export const currentUser = cache(async () => {
   if (!hasSupabaseConfig()) return null;
   const supabase = await createSupabase();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user;
-}
+  const { data } = await supabase.auth.getClaims();
+  return data?.claims.sub ? { id: data.claims.sub } : null;
+});

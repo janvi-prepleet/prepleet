@@ -8,7 +8,7 @@ Read ../AGENTS.md, ../docs/PLAN.md and ../docs/DATABASE.md first. This is one Ne
 - app/page.tsx and components/cab-estimator.tsx: supplied landing-page hero and interactive cab assumptions.
 - app/learn/: domain/type hubs. components/learning-shell.tsx supplies desktop navigation and a native mobile menu, including category/guide links.
 - app/blogs/[slug]/page.tsx: published Markdown guide, key points, sample PDF, table of contents and comments. Domain is navigation context; shared guides/comments retain one ID.
-- app/auth/actions.ts and auth/callback/route.ts: Supabase Google OAuth with PKCE, verified user identity and allowlisted return paths. proxy.ts refreshes cookies. Email/password is deferred by the user's latest instruction.
+- app/auth/actions.ts and auth/callback/route.ts: Supabase Google OAuth with PKCE, verified identity and allowlisted return paths. OAuth start/callback must preserve the browser origin so PKCE cookies stay on the same host. proxy.ts refreshes cookies using getClaims. Email/password is deferred by the user's latest instruction.
 - app/blogs/actions.ts: validates and posts comments using the verified session user. Next.js server actions provide origin checks. Database RLS remains authoritative.
 - lib/supabase/server.ts: publishable-key SSR client only. Never use DATABASE_URL, database passwords or service-role credentials in normal app requests.
 - lib/guides.ts: published guide/comment queries. Author data comes from the explicit public projection, not full profiles.
@@ -27,3 +27,7 @@ Read ../AGENTS.md, ../docs/PLAN.md and ../docs/DATABASE.md first. This is one Ne
 Keep server components by default. Only navigation state, sliders and pending comment forms need client components. Preserve loading/pending, failure and empty states. Do not add a global streaming loading boundary that turns missing pages into HTTP 200 responses; test real status codes.
 
 Hosted migrations, live Google callback verification, Vercel preview and visual/mobile QA are separate verification steps. Do not report them complete from fixture or SQL tests alone.
+
+## Navigation performance
+
+Use verified getClaims for read-only identity and React request-scoped caching, never an unverified getSession user object. Do not globally cache a user's session. Comment mutations retain getUser to verify the active session. Reader/sidebar queries run concurrently, followed by parallel content/identity/comment reads. Do not cache publication checks across requests without explicit invalidation: archived guides must remain inaccessible. Functions target syd1 to match the current Supabase region.

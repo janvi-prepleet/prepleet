@@ -1,6 +1,6 @@
 # Database design contract
 
-Status: user answers recorded in `quries.doc`; MVP design decisions resolved on 2026-11-01. The source of truth is `DB_DESIGN.png`, together with the saved `UI_DESIGN.jsx`. The earlier simplified schema proposal is withdrawn following the user's instruction on 2026-11-01. No schema migrations have been applied.
+Status: user answers recorded in `quries.doc`; MVP design decisions resolved on 2026-11-01. The source of truth is `DB_DESIGN.png`, together with the saved `UI_DESIGN.jsx`. The earlier simplified schema proposal is withdrawn following the user's instruction on 2026-11-01. All four current migrations have now been applied transactionally to the supplied Supabase project; existing solutions is preserved.
 
 ## Preserve the supplied design
 
@@ -53,7 +53,7 @@ Implement small feature branches and PRs; the user merges into main. Each schema
 
 The first schema PR adds `domains`, `case_types` and `case_domain_mapping`, with the diagram's column names and restrictive foreign-key deletes. Catalog data is a production reference-data migration, rather than optional development seed data: all environments need the same nine case types and ten domain/type memberships. Stable UUIDs identify these catalog records; UI-specific keys and display-label differences stay in the frontend mapping when that chunk is implemented.
 
-RLS and explicit SELECT grants let anonymous/authenticated visitors read the taxonomy. Those roles have no INSERT/UPDATE/DELETE grants or write policies. Administrative migrations manage reference data. See `TAXONOMY.md` for local tests and review/deployment boundaries. These files have not been applied to shared Supabase.
+RLS and explicit SELECT grants let anonymous/authenticated visitors read the taxonomy. Those roles have no INSERT/UPDATE/DELETE grants or write policies. Administrative migrations manage reference data. See `TAXONOMY.md` for local tests and review/deployment boundaries. The taxonomy migrations are now recorded in hosted Supabase migration history.
 
 ## Combined MVP implementation
 
@@ -62,3 +62,5 @@ The next migrations add profiles, guides, comments and the original case_studies
 The profile trigger consumes only a bounded Google full_name and generates a non-email username, ignoring privilege/username fields in provider metadata. Existing auth users are backfilled. Normal requests use publishable-key Supabase clients and verified session identity; administrative database credentials are used only for migration/inspection tooling.
 
 Hosted deployment is a separate step from the passing disposable-PostgreSQL and HTTP-fixture suites. See DEPLOYMENT.md.
+
+Hosted status: the combined MVP migrations are applied and recorded; 4 placeholder guides are present. Runtime requests continue to use publishable-key/session clients, never database administrator credentials.
