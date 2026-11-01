@@ -28,7 +28,8 @@ Status: separate private repository created at https://github.com/janvi-prepleet
 - [x] Pass frontend typecheck/build/unit tests, backend offline tests and disposable PostgreSQL integration tests.
 - [x] Raise [admin PR #1](https://github.com/janvi-prepleet/prepleet-admin/pull/1) for review/merge, with source provenance and test boundaries.
 - [x] Create an independent Vercel preview and configure its exact Supabase callback.
-- [ ] User verifies real admin Google login, denial and persistence on the preview.
+- [x] User confirms real admin Google login and workspace access on the preview.
+- [ ] Verify hosted generation, session persistence and non-admin denial.
 
 ## Tests and success criteria
 
@@ -52,7 +53,7 @@ Status: separate private repository created at https://github.com/janvi-prepleet
   connection succeeded after user granted access. User explicitly approved encrypted runtime credentials on 2026-11-02; preview is READY.
 - Automatic approval review initially rejected credential upload; explicit user approval
   was subsequently received for encrypted backend-only settings in the separate admin project.
-- Real hosted admin Google consent, model timings and desktop/mobile visual QA remain pending.
+- User confirmed hosted Google login/workspace access. Model timings and desktop/mobile visual QA remain pending.
   Browser inventory exposes no controlled browser, so no browser test run is claimed.
 
 ## Preview and review
@@ -68,3 +69,10 @@ Status: separate private repository created at https://github.com/janvi-prepleet
 - Runtime configuration was uploaded only after explicit user approval. A read-only connection
   confirmed required PostgreSQL tables, and one live 2+2 model request returned 4.
   This does not establish full-pipeline generation timing or hosted browser acceptance.
+
+2026-11-02 UI correction: the user rejected the inherited Guesstima visual style. Replaced
+it with the public PrepLeet app's exact logo, system font stack, design tokens, 62px white
+header, mint navigation, pine buttons and white bordered cards. Removed the old serif
+headings, marketing illustration and sidebar. Added an admin-specific question/pipeline
+layout using those components. Frontend tests/typecheck/build/lint passed; visual acceptance
+is pending user review. The corrected preview is READY at commit d096141; admin CI passed. Admin access checks and generation APIs are unchanged.

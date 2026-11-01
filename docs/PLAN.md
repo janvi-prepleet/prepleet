@@ -29,7 +29,7 @@ Build PrepLeet with Next.js (frontend and backend), Supabase (database and authe
 
 ## Admin extension — current work
 
-Separate private repository: https://github.com/janvi-prepleet/prepleet-admin. Visible checkout: `admin/` (separate Git repository, ignored by this repository). Initial admin: `janvi.chokshi@prepleet.ai`. Source and hosted schema review complete; local integration tested. Q12 approved and both private PostgreSQL tables applied. Runtime settings explicitly approved and configured; admin preview READY, CI passed. Hosted admin Google acceptance is pending. [Admin preview login](https://prepleet-admin-git-codex-admin-generation-prepleet.vercel.app/login). See [ADMIN_PLAN.md](ADMIN_PLAN.md).
+Separate private repository: https://github.com/janvi-prepleet/prepleet-admin. Visible checkout: `admin/` (separate Git repository, ignored by this repository). Initial admin: `janvi.chokshi@prepleet.ai`. Source and hosted schema review complete; local integration tested. Q12 approved and both private PostgreSQL tables applied. Runtime settings explicitly approved and configured; admin preview READY, CI passed. User confirmed hosted admin Google login and workspace access. The current PrepLeet theme correction is deployed (d096141, READY); full generation timings and visual acceptance remain pending. [Admin preview login](https://prepleet-admin-git-codex-admin-generation-prepleet.vercel.app/login). See [ADMIN_PLAN.md](ADMIN_PLAN.md).
 
 ## Scope and decisions
 
