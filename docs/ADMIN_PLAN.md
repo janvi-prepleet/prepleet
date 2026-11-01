@@ -1,6 +1,6 @@
 # Standalone admin application plan
 
-Status: separate private repository created at https://github.com/janvi-prepleet/prepleet-admin. Checkout: /Users/Janvi.Chokshi/prepleet/admin. Implementation and local verification are complete; preview deployment is in progress after explicit runtime-credential approval. Q12 approved on 2026-11-02; implementation resumed.
+Status: separate private repository created at https://github.com/janvi-prepleet/prepleet-admin. Checkout: /Users/Janvi.Chokshi/prepleet/admin. Implementation and local verification are complete; preview is READY and admin CI passed. Q12 approved on 2026-11-02; implementation resumed.
 
 ## Agreed behavior
 
@@ -27,7 +27,8 @@ Status: separate private repository created at https://github.com/janvi-prepleet
 - [x] Configure ignored local environment from existing supplied service settings; keep keys, source credentials and runtime data out of Git.
 - [x] Pass frontend typecheck/build/unit tests, backend offline tests and disposable PostgreSQL integration tests.
 - [x] Raise [admin PR #1](https://github.com/janvi-prepleet/prepleet-admin/pull/1) for review/merge, with source provenance and test boundaries.
-- [ ] Create an independent Vercel preview and configure exact Supabase callback; verify login, denial and persistence there.
+- [x] Create an independent Vercel preview and configure its exact Supabase callback.
+- [ ] User verifies real admin Google login, denial and persistence on the preview.
 
 ## Tests and success criteria
 
@@ -39,8 +40,8 @@ Status: separate private repository created at https://github.com/janvi-prepleet
 
 ## Current verification
 
-- 45 full backend tests passed against a fresh disposable PostgreSQL instance; 8 focused
-  admin tests also passed after the missing-model configuration check was added.
+- All 46 backend tests passed in GitHub CI, including disposable PostgreSQL; 11 focused
+  model-settings/admin checks passed locally after isolating offline test configuration.
 - Seven frontend tests, TypeScript and production build passed. Two clean shared-schema
   migration/test cycles passed, including both new private tables.
 - Supplied local configuration smoke check passed: health, login, anonymous denial and
@@ -48,8 +49,22 @@ Status: separate private repository created at https://github.com/janvi-prepleet
 - Approved hosted migration 20261102010000 applied/recorded; both new tables have RLS
   and no anon/authenticated SELECT privilege. Existing solutions remains unchanged.
 - Separate Vercel project created (backend root, syd1 config, Node 24); GitHub repository
-  connection succeeded after user granted access. User explicitly approved encrypted runtime credentials on 2026-11-02; preview deployment is in progress.
+  connection succeeded after user granted access. User explicitly approved encrypted runtime credentials on 2026-11-02; preview is READY.
 - Automatic approval review initially rejected credential upload; explicit user approval
   was subsequently received for encrypted backend-only settings in the separate admin project.
 - Real hosted admin Google consent, model timings and desktop/mobile visual QA remain pending.
   Browser inventory exposes no controlled browser, so no browser test run is claimed.
+
+## Preview and review
+
+- [Admin preview login](https://prepleet-admin-git-codex-admin-generation-prepleet.vercel.app/login).
+  Vercel sign-in protection is preserved. Then use janvi.chokshi@prepleet.ai in Google.
+- [Admin implementation PR #1](https://github.com/janvi-prepleet/prepleet-admin/pull/1).
+  CI passed, including all 46 backend tests with PostgreSQL and 7 frontend tests/build.
+- [Shared migration/plan PR #6](https://github.com/janvi-prepleet/prepleet/pull/6).
+  Application and Database CI passed. User merges both PRs.
+- Vercel GitHub connection is configured: branch changes deploy separate previews; main
+  deploys the admin project's production URL after the user merges. The public app is separate.
+- Runtime configuration was uploaded only after explicit user approval. A read-only connection
+  confirmed required PostgreSQL tables, and one live 2+2 model request returned 4.
+  This does not establish full-pipeline generation timing or hosted browser acceptance.

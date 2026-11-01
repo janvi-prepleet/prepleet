@@ -8,7 +8,7 @@
 | Current IDE directory      | Branch `codex/admin-schema`; separate admin checkout on codex/admin-generation                          |
 | App implementation         | Google auth, guide reading, comments, Markdown and sample PDF implemented                               |
 | Automated app checks       | Previous code passed 5 unit and 6 HTTP/action integration tests                                         |
-| Hosted Supabase            | All four migrations applied; existing solutions preserved                                               |
+| Hosted Supabase            | Four MVP migrations plus approved private admin migration applied; solutions preserved                  |
 | Vercel                     | GitHub main is now connected; current deployment READY in syd1                                          |
 | Hosted login configuration | Repaired missing Production app variables and exact callback allowlist; live Google initiation verified |
 | Google acceptance          | User confirmed local and Vercel Google login; persistence/logout/comments still pending                 |
@@ -19,7 +19,7 @@
 
 **Current hosted app:** https://prepleet.vercel.app. Use this stable URL for acceptance, rather than old protected preview URLs.
 
-**Current admin PR:** [prepleet-admin #1](https://github.com/janvi-prepleet/prepleet-admin/pull/1). PR #5 is merged; the shared-schema follow-up is being prepared.
+**Current admin PR:** [prepleet-admin #1](https://github.com/janvi-prepleet/prepleet-admin/pull/1). [Shared migration/plan PR #6](https://github.com/janvi-prepleet/prepleet/pull/6) is also open; PR #5 is merged.
 
 **Last verified public-app deployment:** `dpl_74NErEu7f1XHjZyx6rMAUPmrYKHm`, source `867210d`, READY, region `syd1`. It redeploys the already-merged code with the corrected Production environment. No custom domain/DNS changes were made.
 
@@ -29,7 +29,7 @@ Build PrepLeet with Next.js (frontend and backend), Supabase (database and authe
 
 ## Admin extension — current work
 
-Separate private repository: https://github.com/janvi-prepleet/prepleet-admin. Visible checkout: `admin/` (separate Git repository, ignored by this repository). Initial admin: `janvi.chokshi@prepleet.ai`. Source and hosted schema review complete; local integration tested. Q12 approved: implementing the two private PostgreSQL prompt/feedback tables. Approved private migration applied; runtime credentials explicitly approved; separate preview deploying. See [ADMIN_PLAN.md](ADMIN_PLAN.md).
+Separate private repository: https://github.com/janvi-prepleet/prepleet-admin. Visible checkout: `admin/` (separate Git repository, ignored by this repository). Initial admin: `janvi.chokshi@prepleet.ai`. Source and hosted schema review complete; local integration tested. Q12 approved and both private PostgreSQL tables applied. Runtime settings explicitly approved and configured; admin preview READY, CI passed. Hosted admin Google acceptance is pending. [Admin preview login](https://prepleet-admin-git-codex-admin-generation-prepleet.vercel.app/login). See [ADMIN_PLAN.md](ADMIN_PLAN.md).
 
 ## Scope and decisions
 
