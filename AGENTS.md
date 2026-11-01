@@ -58,3 +58,11 @@ Please review the docs/PLAN.md document before proceeding.
 - Keep implementation and feature branches in `/Users/Janvi.Chokshi/prepleet`, the user's active IDE directory. Do not hide ongoing work in a separate worktree unless explicitly requested.
 - Keep the current status board at the top of `docs/PLAN.md` updated during work and before raising each PR. Distinguish implementation, local/fixture tests, hosted deployment and live browser verification.
 - The user reviews and merges PRs into main. Current auth is Google-only through Supabase; dashboard, community and subscriptions remain excluded.
+
+## Approved admin extension (2026-11-02)
+
+The user authorized a separate private prepleet-admin repository/app, with its checkout
+in admin/ and shared Supabase public.solutions. Initial admin email is
+janvi.chokshi@prepleet.ai. Q12 approves private prompt-version and feedback tables.
+See docs/ADMIN_PLAN.md. Keep the public app's runtime/UI unchanged; solution presentation
+is deferred. The admin checkout has its own Git history and instructions.

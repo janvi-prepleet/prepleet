@@ -64,3 +64,15 @@ The profile trigger consumes only a bounded Google full_name and generates a non
 Hosted deployment is a separate step from the passing disposable-PostgreSQL and HTTP-fixture suites. See DEPLOYMENT.md.
 
 Hosted status: the combined MVP migrations are applied and recorded; 4 placeholder guides are present. Runtime requests continue to use publishable-key/session clients, never database administrator credentials.
+
+## Approved standalone admin persistence
+
+Q12 approved on 2026-11-02. Migration 20261102010000 adds only
+prepleet_private.admin_prompt_versions and admin_feedback_events. Both have RLS and no
+browser grants/policies. Existing public.solutions and its owner-read policy are unchanged.
+The separate admin backend checks the verified-email allowlist, preserves solution
+ownership/version checks, and serializes prompt changes with optimistic versions and
+an advisory transaction lock. Prompt and feedback writes are atomic. Canonical shared
+migration lives here; the corresponding admin repository migration is 002_admin_prompts.sql.
+Hosted migration is applied and recorded; browser-role read denial was verified.
+No public solution display or publication workflow is introduced.

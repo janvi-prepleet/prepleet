@@ -4,11 +4,11 @@
 
 | Area                       | Status                                                                                                  |
 | -------------------------- | ------------------------------------------------------------------------------------------------------- |
-| PRs #1–#4                  | Merged; latest main is 867210d                                                                          |
-| Current IDE directory      | Next branch `codex/hosted-auth-verification`, based on merged main                                      |
+| PRs #1–#5                  | Merged; latest main is 2a1fa5b                                                                          |
+| Current IDE directory      | Branch `codex/admin-schema`; separate admin checkout on codex/admin-generation                          |
 | App implementation         | Google auth, guide reading, comments, Markdown and sample PDF implemented                               |
 | Automated app checks       | Previous code passed 5 unit and 6 HTTP/action integration tests                                         |
-| Hosted Supabase            | All four migrations applied; existing solutions preserved                                               |
+| Hosted Supabase            | Four MVP migrations plus approved private admin migration applied; solutions preserved                  |
 | Vercel                     | GitHub main is now connected; current deployment READY in syd1                                          |
 | Hosted login configuration | Repaired missing Production app variables and exact callback allowlist; live Google initiation verified |
 | Google acceptance          | User confirmed local and Vercel Google login; persistence/logout/comments still pending                 |
@@ -19,18 +19,22 @@
 
 **Current hosted app:** https://prepleet.vercel.app. Use this stable URL for acceptance, rather than old protected preview URLs.
 
-**Current PR:** [#5: hosted login smoke check and deployment progress](https://github.com/janvi-prepleet/prepleet/pull/5), awaiting review/merge. The remote configuration repair is already live.
+**Current admin PR:** [prepleet-admin #1](https://github.com/janvi-prepleet/prepleet-admin/pull/1). [Shared migration/plan PR #6](https://github.com/janvi-prepleet/prepleet/pull/6) is also open; PR #5 is merged.
 
-**Latest deployment:** `dpl_74NErEu7f1XHjZyx6rMAUPmrYKHm`, source `867210d`, READY, region `syd1`. It redeploys the already-merged code with the corrected Production environment. No custom domain/DNS changes were made.
+**Last verified public-app deployment:** `dpl_74NErEu7f1XHjZyx6rMAUPmrYKHm`, source `867210d`, READY, region `syd1`. It redeploys the already-merged code with the corrected Production environment. No custom domain/DNS changes were made.
 
 **Working rule:** all future implementation branches and progress edits stay in this directory. Update this status board during work and before raising a PR; the user merges PRs into main.
 
 Build PrepLeet with Next.js (frontend and backend), Supabase (database and authentication), repository Markdown and temporary static PDFs, GitHub and Vercel. Check tasks only after implementation and verification. Record limitations and approvals here.
 
+## Admin extension — current work
+
+Separate private repository: https://github.com/janvi-prepleet/prepleet-admin. Visible checkout: `admin/` (separate Git repository, ignored by this repository). Initial admin: `janvi.chokshi@prepleet.ai`. Source and hosted schema review complete; local integration tested. Q12 approved and both private PostgreSQL tables applied. Runtime settings explicitly approved and configured; admin preview READY, CI passed. User confirmed hosted admin Google login and workspace access. The current PrepLeet theme correction is deployed (d096141, READY); full generation timings and visual acceptance remain pending. [Admin preview login](https://prepleet-admin-git-codex-admin-generation-prepleet.vercel.app/login). See [ADMIN_PLAN.md](ADMIN_PLAN.md).
+
 ## Scope and decisions
 
 - In scope: signup, login, logout, published guesstimate blogs, PDF downloads, viewing/posting comments, and Practice “Coming soon”.
-- Out of scope: working practice, scoring, progress, bookmarks, reactions, payments, AI chat, Kanban, FastAPI, and an admin UI.
+- Original public-app scope excludes working practice, scoring, progress, bookmarks, reactions, payments, AI chat and Kanban. New user-authorized extension on 2026-11-02: separate private admin app reusing the Python generation pipeline; see ADMIN_PLAN.md. Public-app solution display remains deferred.
 - Latest decisions on 2026-11-01: public reading/PDFs, Google-only sign-in for now, and posting-only comments with owner moderation. Google auth supersedes the earlier email/password decision; password verification/reset work is deferred. The user authorized combining the remaining MVP into one PR and creation of the Vercel project/preview.
 - User authorized development following this plan on 2026-11-01. The user answered Q1–Q10 and delegated Q11 technical defaults on 2026-11-01. Small PRs may resume; production/DNS changes still require release approval.
 - Target GitHub account: `janvi-prepleet`. The supplied `GIT_KEY` authenticated successfully through the GitHub API; local `origin` is `https://github.com/janvi-prepleet/prepleet.git`. Repository-local commit identity uses janvi-prepleet and the verified account’s GitHub noreply address. PRs #1 and #2 are merged; combined MVP integration starts from merge 6cf4146 on codex/mvp-integration.
