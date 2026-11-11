@@ -4,8 +4,11 @@
 
 | Area                       | Status                                                                                                  |
 | -------------------------- | ------------------------------------------------------------------------------------------------------- |
-| PRs #1–#5                  | Merged; latest main is 2a1fa5b                                                                          |
-| Current IDE directory      | Branch `codex/admin-schema`; separate admin checkout on codex/admin-generation                          |
+| Git delivery (2026-11-11) | New branches from latest main: admin `codex/admin-pdf-luna`, parent `codex/admin-progress`; frontend typecheck/lint/build and 20 tests passed; backend 59 passed, 4 disposable PostgreSQL checks skipped; hosted deployment and browser verification pending |
+| Admin DAG database fix (2026-11-09) | Confirmed hosted missing `solutions.pdf_data` caused SQLSTATE 42703 on DAG save; applied existing migration 003 (nullable JSONB only); read-only save-query check passed; 18 offline solution/PDF tests passed; live generation/browser retry pending |
+| Admin agent models | All five model-backed agents configured locally for `gpt-6-luna` / `high`, including local environment overrides; content function calls migrated to Responses with retry history preserved; 16 offline tests passed; restart backend to load settings; hosted deployment and live-model/browser verification pending |
+| PRs #1–#6                  | Merged; latest main is c25c4bb                                                                          |
+| Current IDE directory      | Branch `codex/admin-progress`; separate admin checkout on `codex/admin-pdf-luna`                          |
 | App implementation         | Google auth, guide reading, comments, Markdown and sample PDF implemented                               |
 | Automated app checks       | Previous code passed 5 unit and 6 HTTP/action integration tests                                         |
 | Hosted Supabase            | Four MVP migrations plus approved private admin migration applied; solutions preserved                  |
@@ -13,13 +16,16 @@
 | Hosted login configuration | Repaired missing Production app variables and exact callback allowlist; live Google initiation verified |
 | Google acceptance          | User confirmed local and Vercel Google login; persistence/logout/comments still pending                 |
 | Design acceptance          | Desktop/mobile visual comparison remains pending; exact match not verified                              |
+| Local admin UI             | Fixed stale packaged build overriding frontend/dist; local server restarted in mock mode; regression checks passed |
+| Admin graph layout         | Graphviz shared SVG preview/PDF implemented and locally tested; 22-node two-page export visually verified; Vercel native packaging/hosted verification pending |
+| Admin revision PDF         | Dedicated mock PDF pipeline, JSON generation, one-/two-page A4 preview/export with existing PDF shown first and regeneration in Revision-sheet data implemented locally; tests passed; hosted migration 003 applied; deployment and live verification pending |
 | Production domain          | Using existing prepleet.vercel.app; custom domain remains unconfirmed                                   |
 
 **Run locally:** `npm run dev` in this directory, then open http://localhost:3000.
 
 **Current hosted app:** https://prepleet.vercel.app. Use this stable URL for acceptance, rather than old protected preview URLs.
 
-**Current admin PR:** [prepleet-admin #1](https://github.com/janvi-prepleet/prepleet-admin/pull/1). [Shared migration/plan PR #6](https://github.com/janvi-prepleet/prepleet/pull/6) is also open; PR #5 is merged.
+**Previous PRs:** Admin #1 and public #6 are merged. New PDF/Luna work is on `codex/admin-pdf-luna`; parent progress updates are on `codex/admin-progress`.
 
 **Last verified public-app deployment:** `dpl_74NErEu7f1XHjZyx6rMAUPmrYKHm`, source `867210d`, READY, region `syd1`. It redeploys the already-merged code with the corrected Production environment. No custom domain/DNS changes were made.
 
