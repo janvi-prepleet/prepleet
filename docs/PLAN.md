@@ -4,11 +4,12 @@
 
 | Area                       | Status                                                                                                  |
 | -------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Admin release (2026-11-22) | Admin PRs #2–#5 merged. Vercel production serves c29e9c0. Verified the signed-in SVG download and the original saved sheet’s 52,228-byte PDF download, including the solution tree and interview summary on two A4 pages. |
 | Git delivery (2026-11-11) | New branches from latest main: admin `codex/admin-pdf-luna`, parent `codex/admin-progress`; frontend typecheck/lint/build and 20 tests passed; backend 59 passed, 4 disposable PostgreSQL checks skipped; hosted deployment and browser verification pending |
 | Admin DAG database fix (2026-11-09) | Confirmed hosted missing `solutions.pdf_data` caused SQLSTATE 42703 on DAG save; applied existing migration 003 (nullable JSONB only); read-only save-query check passed; 18 offline solution/PDF tests passed; live generation/browser retry pending |
-| Admin agent models | All five model-backed agents configured locally for `gpt-6-luna` / `high`, including local environment overrides; content function calls migrated to Responses with retry history preserved; 16 offline tests passed; restart backend to load settings; hosted deployment and live-model/browser verification pending |
+| Admin agent models | All five agents configured for gpt-6-luna with high reasoning effort in production. Content function calls use Responses. Offline tests passed. Live model generation remains unverified. |
 | PRs #1–#6                  | Merged; latest main is c25c4bb                                                                          |
-| Current IDE directory      | Branch `codex/admin-progress`; separate admin checkout on `codex/admin-pdf-luna`                          |
+| Current IDE directory | Parent on `codex/admin-progress`, separate admin checkout on `fix/graphviz-fonts`. |
 | App implementation         | Google auth, guide reading, comments, Markdown and sample PDF implemented                               |
 | Automated app checks       | Previous code passed 5 unit and 6 HTTP/action integration tests                                         |
 | Hosted Supabase            | Four MVP migrations plus approved private admin migration applied; solutions preserved                  |
@@ -17,15 +18,15 @@
 | Google acceptance          | User confirmed local and Vercel Google login; persistence/logout/comments still pending                 |
 | Design acceptance          | Desktop/mobile visual comparison remains pending; exact match not verified                              |
 | Local admin UI             | Fixed stale packaged build overriding frontend/dist; local server restarted in mock mode; regression checks passed |
-| Admin graph layout         | Graphviz shared SVG preview/PDF implemented and locally tested; 22-node two-page export visually verified; Vercel native packaging/hosted verification pending |
-| Admin revision PDF         | Dedicated mock PDF pipeline, JSON generation, one-/two-page A4 preview/export with existing PDF shown first and regeneration in Revision-sheet data implemented locally; tests passed; hosted migration 003 applied; deployment and live verification pending |
+| Admin graph layout | Shared Graphviz SVG and vector PDF deployed. Bundled Liberation Sans gives the Linux renderer consistent label measurements. Signed-in graph download verified. |
+| Admin revision PDF | One- or two-page A4 export deployed. Migration 003 applied. Production PDF download verified from an existing saved solution. Fresh model generation remains unverified. |
 | Production domain          | Using existing prepleet.vercel.app; custom domain remains unconfirmed                                   |
 
 **Run locally:** `npm run dev` in this directory, then open http://localhost:3000.
 
 **Current hosted app:** https://prepleet.vercel.app. Use this stable URL for acceptance, rather than old protected preview URLs.
 
-**Previous PRs:** Admin #1 and public #6 are merged. New PDF/Luna work is on `codex/admin-pdf-luna`; parent progress updates are on `codex/admin-progress`.
+Public PR #6 and admin PRs #1–#5 are merged. Public PR #7 tracks the parent release notes.
 
 **Last verified public-app deployment:** `dpl_74NErEu7f1XHjZyx6rMAUPmrYKHm`, source `867210d`, READY, region `syd1`. It redeploys the already-merged code with the corrected Production environment. No custom domain/DNS changes were made.
 
